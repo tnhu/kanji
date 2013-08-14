@@ -6,7 +6,7 @@
  *
  * @author Tan Nhu, tannhu@gmail.com
  * @licence MIT
- * @dependency jQuery, jQuery.parseJSON, jsface, jsface.ready
+ * @dependency jsface, jsface.ready, jQuery, JSON || jQuery.parseJSON
  * @date Aug 13, 2013
  */
 Class(function() {
@@ -105,7 +105,7 @@ Class(function() {
         }
 
         // init is called every time, no matter what type is
-        instance.init(config, container);
+        instance.init(container, config);
 
         // mark the component is already initialized
         container.attr(DATA_AUTO_GENERATED, instanceId);
@@ -115,6 +115,21 @@ Class(function() {
     }
 
     return instanceRefs[instanceId];
+  }
+
+  /**
+   * Initialize non-lazy components (data-lazy="false")
+   * TODO better name
+   */
+  function initAllLazy() {
+    $(SEL_COMPONENT).each(function() {
+      var container = $(this);
+
+      // if strategy is ready, then initialize the component
+      if (container.data('lazy') === false) {
+        initComponent(container);
+      }
+    });
   }
 
   /**
@@ -146,11 +161,14 @@ Class(function() {
   return {
     $statics: {
       /**
-       * Initialize a component
+       * Initialize a specific component
        * @param container jQuery container object
        * @return reference to instance of the component
        */
-      initComponent: initComponent
+      initComponent: initComponent,
+
+      // TODO a better name
+      initAllLazy: initAllLazy
     },
 
     /*
@@ -185,19 +203,7 @@ Class(function() {
       Kanji = clazz;
 
       $.fn.ready(function() {
-        //
-        // Initialize non-lazy components (data-lazy="false")
-        //
-        $(SEL_COMPONENT).each(function() {
-          var container   = $(this),
-              componentId = container.data(KEY_COMPONENT),
-              Component   = repository[componentId];
-
-          // if strategy is ready, then initialize the component
-          if (container.data('lazy') === false) {
-            initComponent(container);
-          }
-        });
+        initAllLazy();
 
         //
         // Bind events on button, and role='button'... elements (based on SELECTOR)
@@ -219,17 +225,18 @@ Class(function() {
             fn       = instance && action && instance[action];
           }
 
+          // TODO caching json on action: Parsing everytime seems costly
           if ( !action || !fn) {
             error('action [', action, '] not found in component [', parent.data(KEY_COMPONENT), ']');
           } else if (isFunction(fn)) {
-            fn.call(instance, button, parseConfig(button.attr(DATA_CONFIG)), parent);
+            fn.call(instance, button, parent, parseConfig(button.attr(DATA_CONFIG)));
           } else {
             error('action [', action, '] found in component [', parent.data(KEY_COMPONENT), '] is not a function');
           }
         });
 
         //
-        // Schedule garbage collection on removed DOM elements (DOM detach -> remove instance reference)
+        // Schedule garbage collection on detached DOM elements (DOM detach -> remove instance reference)
         //
         setTimeout(gc, GC_TIMEOUT);
       });

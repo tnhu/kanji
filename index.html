@@ -28,8 +28,11 @@
     <button data-act="check">Check 4</button>
   </div>
 
-  <div data-com="Card" data-cfg="[1, 2, 3]">                                                    <!-- component with a array config -->
+  <div data-com="Card" data-cfg="[1, 2, 3]" data-airy="false">                                                    <!-- component with a array config -->
     <p>Component Instance 5 (array config)</p>
+    <p>
+      <input type="text" data-onchange="" data-onfocus="" data-onleave="" />
+     </p>
     <button data-act="check">Check 5</button>
   </div>
 
@@ -45,7 +48,7 @@
       <button data-act="check1">Test 1</button>
       <a data-act="check2" role="button">Click a link</a>                                         <!-- action on link -->
 
-      <button data-act="modal" data-cfg="#some-id">Open modal 1</button>                          <!-- html on page -->
+      <button data-act="modal" data-cfg="#some-id" data-airy="false">Open modal 1</button>                          <!-- html on page -->
       <button data-act="modal" data-cfg="/people/dialog">Open modal 2</button>                    <!-- fetch html from url -->
       <button data-act="modal" data-cfg="{ 'json': 'url', 'tmpl': 'tmpl' }">Open modal 2</button> <!-- fetch JSON, and use template to render -->
       <button data-act="event" data-cfg="ev-say-something">Fire an event</button>                 <!-- Fire an event to system bus, data-cfg is a string -->

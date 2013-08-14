@@ -4,20 +4,20 @@ Class(Kanji, {
   /**
    * Open a modal
    * @param button jQuery object represents target button element
-   * @param config JSON data passed speficied in button
    * @param container jQuery object represents component container
+   * @param config JSON data passed speficied in button
    */
-  onModal: function(button, config, container) {
+  onModal: function(button, container, config) {
     console.log('onModal: ', button, config, container);
   },
 
   /**
    * Fire a system event
    * @param button jQuery object represents target button element
-   * @param config JSON data passed speficied in button
    * @param container jQuery object represents component container
+   * @param config JSON data passed speficied in button
    */
-  onEvent: function(button, config, container) {
+  onEvent: function(button, container, config) {
     console.log('onEvent: ', button, config, container);
   },
 

@@ -14,7 +14,7 @@ Class(LI.Component, {
    * @param config configuration
    * @param element jQuery attached DOM object
    */
-  init: function(config, element) {
+  init: function(element, config) {
     console.log('Execute init() with ', element, 'config', config, 'type', typeof config);
   },
 
