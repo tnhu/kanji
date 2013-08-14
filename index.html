@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kanji Prototyping</title>
+  <link rel="stylesheet" href="css/reset.css" type="text/css"/>
+  <link rel="stylesheet" href="css/component.css" type="text/css"/>
+</head>
+<body data-com="Page" data-cfg="{}">
+
+  <!-- This is a component, it has its own life circle -->
+  <div data-com="Card">                                                                         <!-- component without config -->
+    <p>Component Instance 1</p>
+    <button data-act="check">Check 1</button>
+  </div>
+
+  <div data-com="Card" data-cfg="hello">                                                        <!-- component with a string config -->
+    <p>Component Instance 2</p>
+    <button data-act="check">Check 2</button>
+  </div>
+
+  <div data-com="Card" data-cfg="1">                                                            <!-- component with a number config -->
+    <p>Component Instance 3 (number config)</p>
+    <button data-act="check">Check 3</button>
+  </div>
+
+  <div data-com="Card" data-cfg="true">                                                         <!-- component with a number config -->
+    <p>Component Instance 4 (boolen config)</p>
+    <button data-act="check">Check 4</button>
+  </div>
+
+  <div data-com="Card" data-cfg="[1, 2, 3]">                                                    <!-- component with a array config -->
+    <p>Component Instance 5 (array config)</p>
+    <button data-act="check">Check 5</button>
+  </div>
+
+  <div data-com="Card" data-cfg="{ 'number': 2 }" data-lazy="false">                            <!-- force to init this component when DOM is ready -->
+    <p>Hello World 2 (object config)</p>
+    <button data-act="check">Check</button>
+  </div>
+
+  <div data-com="Panel" data-lazy="false">
+    <div data-com="Card" data-cfg="{ 'number': 3 }">
+      <p>Card inside a panel</p>
+
+      <button data-act="check1">Test 1</button>
+      <a data-act="check2" role="button">Click a link</a>                                         <!-- action on link -->
+
+      <button data-act="modal" data-cfg="#some-id">Open modal 1</button>                          <!-- html on page -->
+      <button data-act="modal" data-cfg="/people/dialog">Open modal 2</button>                    <!-- fetch html from url -->
+      <button data-act="modal" data-cfg="{ 'json': 'url', 'tmpl': 'tmpl' }">Open modal 2</button> <!-- fetch JSON, and use template to render -->
+      <button data-act="event" data-cfg="ev-say-something">Fire an event</button>                 <!-- Fire an event to system bus, data-cfg is a string -->
+    </div>
+
+    <p>
+      Panel action
+      <button data-act="send" data-cfg="send-something">Send</button>
+    </p>
+  </div>
+
+  <div id="some-id">
+    <button data-act="login" data-cfg="{somedata}">Login handled by Page</button>
+  </div>
+
+  <!-- lib level -->
+  <script src="js/lib/jsface.js"></script>
+  <script src="js/lib/jsface.ready.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+  <!-- framework level -->
+  <script src="js/lib/kanji.js"></script>
+  <script src="js/components/Component.js"></script>
+  <script src="js/components/Page.js"></script>
+  <script src="js/components/Panel.js"></script>
+  <script src="js/components/Card.js"></script>
+
+  <!-- page specific level -->
+  <script src="js/page/home.js"></script>
+
+</body>
+</html>
