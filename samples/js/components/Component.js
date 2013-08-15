@@ -1,5 +1,6 @@
 Class(Kanji, {
-  componentId: 'Component',
+  componentId   : 'Component',
+  componentType : 'shared',          /* by default, all inherit components are 'shared', change to 'instance' or remove to make it 'instance' */
 
   /**
    * Open a modal
@@ -8,7 +9,7 @@ Class(Kanji, {
    * @param config JSON data passed speficied in button
    */
   onModal: function(button, container, config) {
-    console.log('onModal: ', button, config, container);
+    console.log('onModal called from Component: ', button, config, container);
   },
 
   /**

@@ -26,6 +26,7 @@ Class(function() {
       isString            = jsface.isString,
       isFunction          = jsface.isFunction,
       $                   = jQuery,
+      timeout             = setTimeout,
       parseJSON           = (typeof JSON === 'object') && JSON.parse || $.parseJSON;  // fallback to jQuery.parseJSON if JSON does not exist
 
   /**
@@ -125,7 +126,7 @@ Class(function() {
     $(SEL_COMPONENT).each(function() {
       var container = $(this);
 
-      // if strategy is ready, then initialize the component
+      // not want lazy loading? then initialize the component
       if (container.data('lazy') === false) {
         initComponent(container);
       }
@@ -155,7 +156,7 @@ Class(function() {
     }
 
     // auto-check after GC_TIMEOUT ms
-    setTimeout(gc, GC_TIMEOUT);
+    timeout(gc, GC_TIMEOUT);
   }
 
   return {
@@ -169,6 +170,14 @@ Class(function() {
 
       // TODO a better name
       initAllLazy: initAllLazy
+    },
+
+    /**
+     * init is called when component's attached DOM element is ready. Normally subclasses overrides this method.
+     * @param config configuration
+     * @param element jQuery attached DOM object
+     */
+    init: function(element, config) {
     },
 
     /*
@@ -203,12 +212,13 @@ Class(function() {
       Kanji = clazz;
 
       $.fn.ready(function() {
+        var _document = $(document);
         initAllLazy();
 
         //
         // Bind events on button, and role='button'... elements (based on SELECTOR)
         //
-        $(document).on(EVENT_TYPE, SELECTOR, function() {
+        _document.on(EVENT_TYPE, SELECTOR, function() {
           var button      = $(this),
               parent      = button.closest(SEL_COMPONENT),
               componentId = parent.data(KEY_AUTO_GENERATED),
@@ -236,9 +246,15 @@ Class(function() {
         });
 
         //
+        // Bind keydown, keyup... on input and textarea
+        //
+        _document.on('keydown', 'input', function(event) {
+        });
+
+        //
         // Schedule garbage collection on detached DOM elements (DOM detach -> remove instance reference)
         //
-        setTimeout(gc, GC_TIMEOUT);
+        timeout(gc, GC_TIMEOUT);
       });
     }
   };

@@ -9,7 +9,7 @@ Class(LI.Component, {
    * @param config configuration
    * @param element jQuery attached DOM object
    */
-  init: function(config, element) {
+  init: function(element, config) {
     console.log('Execute panel init() with ', element, 'config', config);
   },
 
