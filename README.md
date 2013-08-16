@@ -27,7 +27,7 @@ Or import Kanji full which includes jsface and jsface.ready:
 <script src="kanji-full.js" type="text/javascript"></script>
 ```
 
-## Give me an example
+## Trivial sample
 
 First, assume you have an HTML element like below. You declare it as a component by specifying attribute data-com="YourComponentId".
 
