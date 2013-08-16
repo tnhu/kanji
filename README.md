@@ -203,7 +203,7 @@ LoginDialog = Class(Component, {
 
 ## More about instantiation
 
-By default, Kanji does not do anything until there's a user interaction happens inside the component's actual DOM representation. If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that DOM's scope. Imaging you have 100 declarations of a component named "Card":
+By default, Kanji does not do anything until there's a user interaction happens inside the component's HTML fragment. If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that fragment's scope. Imaging you have 100 declarations of a component named "Card":
 
 ``` html
 <div data-com="Card">
@@ -231,7 +231,7 @@ Kanji has a garbage collector. When all the DOM elements represent a component a
 
 ## Best practice
 
-I would recommend to define a root class component which includes all shared actions in it. Other components extend the root component (or its subclass) rather than inheriting from Kanji class directly. And it would be always better to group your components under a namespace instead of making a lot of global variables.
+I would recommend to define a root class component which includes all shared actions. Other components extend the root component (or its subclass) rather than inheriting from Kanji class directly. And it would be always better to group your components under a namespace instead of making a lot of global variables.
 
 ``` js
 LI = {};
