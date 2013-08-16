@@ -5,7 +5,7 @@ Kanji 感じ
 
 ## What is Kanji?
 
-Kanji is a web declarative component framework. The idea behind Kanji is when develop a web component, HTML and CSS come first, then JavaScript. Kanji's mission is to help you to build web components fast, easy, clean, extensible, and testable.
+Kanji is a web declarative component framework. The idea behind Kanji is when develop a web component, HTML and CSS come first, then JavaScript only gets involved when user interacting happens. Kanji's mission is to help you to build web components fast, easy, elegant, extensible, and testable.
 
 Kanji is tiny. When minimized and gziped, standalone version is less than 1K, full version including dependencies (without jQuery) is around 1.8K.
 
@@ -200,6 +200,33 @@ LoginDialog = Class(Component, {
   }
 });
 ```
+
+## More about instantiation
+
+By default, Kanji does not do anything until there's a user interaction happens inside the component's actual DOM representation. If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that DOM's scope. Imaging you have 100 declarations of a component named "Card":
+
+``` html
+<div data-com="Card">
+  <p>Card 1</p>
+  <button data-act="hello">Say hi</button>
+</div>
+<div data-com="Card">
+  <p>Card 2</p>
+  <button data-act="hello">Say hi</button>
+</div>
+
+...
+
+<div data-com="Card">
+  <p>Card 100</p>
+  <button data-act="hello">Say hi</button>
+</div>
+```
+
+When you click button "Say hi" on the first card (or any card), first instance of Card is instantiated. When you click "Say hi" on the second card, another instance is instantiated.
+
+What happens if you specify componentType="shared" in Card? When you first click "Say hi" on any card, one instance of Card is instantiated and this instance will be shared accross all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
+
 
 ## Best practice
 
