@@ -29,7 +29,7 @@ Or import Kanji full which includes jsface and jsface.ready:
 
 ## Trivial sample
 
-First, assume you have an HTML element like below. You declare it as a component by specifying attribute data-com="YourComponentId".
+Assume you have an HTML fragment like below. You declare it as a component by specifying attribute data-com="YourComponentId".
 
 ``` html
 <div data-com="MyComponent">
@@ -37,7 +37,7 @@ First, assume you have an HTML element like below. You declare it as a component
 </div>
 ```
 
-And then capture event when users click (or touch) on the button in your component's implementation.
+Next you capture event when users interact (click or touch) with the button in the component's implementation.
 
 ``` js
 Class(Kanji, {
