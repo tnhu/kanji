@@ -144,11 +144,23 @@ Map your declared actions to your component's methods by implementing "on" + act
 
 ``` js
 MyExampleComponent = Class(Kanji, {
+  componentId: "MyExampleComponent",
+
   onHi: function(button, container, config) {
   },
 
   onBye: function(button, container, config) {
   }
+});
+```
+
+## Shared component instance
+
+By default, an instance of the component class will be created per each declared DOM elememt. Kanji supports shared instance where only one instance of the component is created for all declared DOM elements. You can enable shared instance by adding componentType="shared" when declaring your component.
+
+MyExampleComponent = Class(Kanji, {
+  componentId: "MyExampleComponent",
+  componentType: "shared"
 });
 ```
 
@@ -159,15 +171,17 @@ I would recommend to define a root class component which includes all shared act
 ``` js
 LI = {};
 LI.Component = Class(Kanji, {
+  componentId: "Component",
+
   // shared actions
 });
 
 LI.MyExampleComponent = Class(LI.Component, {
+  componentId: "MyExampleComponent",
+
   // ...
 });
 ```
-
-## Under the hook
 
 ## License
 
