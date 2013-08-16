@@ -156,7 +156,7 @@ MyExampleComponent = Class(Kanji, {
 
 ## Shared component instance
 
-By default, an instance of the component class will be created per each declared DOM elememt. Kanji supports shared instance where only one instance of the component is instantiated for all declared DOM elements. You can enable shared instance by adding componentType="shared" when declaring your component.
+As being said, by default, an instance of the component class is instantiated per each declared DOM elememt. Kanji supports shared instance where only one instance of the component is instantiated for all declared DOM elements. Enabling shared instance by adding componentType="shared" when declaring your component.
 
 ``` js
 MyExampleComponent = Class(Kanji, {
