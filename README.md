@@ -133,7 +133,7 @@ MyExampleComponent = Class(Kanji, {
 
 In which:
 
-* container: jQuery object represents the component element
+* container: jQuery object represents the component element (HTML)
 * config: configuration declared in the component (if any)
 
 Map your declared actions to your component's methods by implementing "on" + action methods. When an action accurs, there are three parameters will be passed to its handler:
@@ -156,7 +156,7 @@ MyExampleComponent = Class(Kanji, {
 
 ## Shared component instance
 
-By default, an instance of the component class will be created per each declared DOM elememt. Kanji supports shared instance where only one instance of the component is created for all declared DOM elements. You can enable shared instance by adding componentType="shared" when declaring your component.
+By default, an instance of the component class will be created per each declared DOM elememt. Kanji supports shared instance where only one instance of the component is instantiated for all declared DOM elements. You can enable shared instance by adding componentType="shared" when declaring your component.
 
 ``` js
 MyExampleComponent = Class(Kanji, {
@@ -165,7 +165,7 @@ MyExampleComponent = Class(Kanji, {
 });
 ```
 
-## Inheritance
+## Inheritance and extending
 
 Powered by [jsface](https://github.com/tannhu/jsface), Kanji allows multiple level inheritance. Subclass can override and invoke parent's actions (methods).
 
@@ -227,6 +227,7 @@ When you click button "Say hi" on the first card (or any card), first instance o
 
 What happens if you specify componentType="shared" in Card? When you first click "Say hi" on any card, one instance of Card is instantiated and this instance will be shared accross all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
 
+Kanji has a garbage collector. When all the DOM elements represent a component are detached, all of its instances will be removed. In the other word, components can be attached and detached as will.
 
 ## Best practice
 

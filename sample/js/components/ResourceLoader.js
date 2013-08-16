@@ -3,7 +3,7 @@
 
 LI.ResourceLoader = Class(LI.Component, {
   componentId   : 'ResourceLoader',
-  componentType : 'shared',
+  componentType : 'shared',             /* one shared instance */
 
   init: function(element, config) {
     var type, i, len, items, url,
@@ -20,7 +20,6 @@ LI.ResourceLoader = Class(LI.Component, {
 
         switch (type) {
         case 'js':
-          console.log('Getting script', url);
           $.getScript(url);
           break;
 

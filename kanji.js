@@ -2,12 +2,11 @@
 /* global Kanji:true, Class, console, jsface, setTimeout, document */
 
 /**
- * Kanji (感じ feeling, sense, impression) declarative component framework
+ * Kanji 感じ - web declarative component framework
  *
- * @author Tan Nhu, tannhu@gmail.com
+ * @author Tan Nhu, tannhu __@__ gmail __.__ com
  * @licence MIT
  * @dependency jsface, jsface.ready, jQuery, JSON || jQuery.parseJSON
- * @date Aug 13, 2013
  */
 Class(function() {
   var EVENT_TYPE          = window.Touch ? 'touchend' : 'click',     // event type

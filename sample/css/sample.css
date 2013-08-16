@@ -1,0 +1,145 @@
+/** Page CSS */
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: url(http://osxdaily.com/wp-content/uploads/2011/10/NSTexturedFullScreenBackgroundColor.png) repeat;
+}
+
+.resource-loader {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+#log {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  height: 150px;
+  width: 400px;
+  border: 1px solid #333;
+  padding: 10px;
+  overflow: auto;
+  background: rgb(0, 0, 0);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+#log p {
+  font-size: 12px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: green;
+  margin: 0 0px 8px 0;
+}
+
+#log p.title {
+  color: yellow;
+  font-weight: bold;
+  border-bottom: 1px solid #666;
+}
+
+button {
+  background: transparent;
+  position: absolute;
+  text-indent: -9999px;
+}
+
+button:active {
+  border: 1px solid green;
+}
+
+/** Component CSS */
+
+.page, .view {
+  width: 333px;
+  height: 500px;
+  position: absolute;
+  margin: auto;
+  top: 0; left: 0; bottom: 0; right: 0;
+  display: none;
+}
+
+.page {
+  display: block;
+}
+
+.view.active {
+  display: block;
+}
+
+.stylist {
+  background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/1.png) no-repeat;
+}
+
+.blog {
+  background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/2.png) no-repeat;
+}
+
+.featured {
+  background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/3.png) no-repeat;
+}
+
+.wardrope {
+  background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/4.png) no-repeat;
+}
+
+.bt-stylist, .bt-blog, .bt-featured, .bt-wardrope {
+  bottom: 0;
+  height: 50px;
+  width: 84px;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+.bt-stylist {
+  left: 0;
+}
+
+
+.bt-blog {
+  left: 84px;
+}
+
+.bt-featured {
+  left: 168px;
+}
+
+.bt-wardrope {
+  left: 250px;
+}
+
+.bt-feedback {
+  bottom: 64px;
+  height: 46px;
+  left: 10px;
+  width: 313px;
+  border-radius: 4px;
+}
+
+.bt-email {
+  bottom: 229px;
+  height: 40px;
+  right: 12px;
+  width: 40px;
+  border-radius: 40px;
+}
+
+.bt-call {
+  bottom: 229px;
+  height: 40px;
+  right: 63px;
+  width: 40px;
+  border-radius: 40px;
+}
+
+.bt-profile {
+  bottom: 279px;
+  height: 132px;
+  right: 100px;
+  width: 133px;
+  border-radius: 133px;
+}
