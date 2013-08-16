@@ -3,7 +3,7 @@ Kanji 感じ
 
 [![Build Status](https://travis-ci.org/tnhu/kanji.png?branch=master)](https://travis-ci.org/tnhu/kanji)
 
-Kanji is a web declarative component framework. The idea behind Kanji is when you develop a web component, HTML and CSS come first, then JavaScript only gets involved when user interacting happens. Kanji's mission is to help you to build web components fast, easy, elegant, extensible, and testable.
+Kanji is a web declarative component framework. The idea behind Kanji is when you develop a web component, HTML and CSS should come first, then JavaScript only gets involved when user interacting happens. Kanji defines a set of HTML data attributes and simple JavaScript APIs to build elegant, extensible, and testable web components.
 
 Kanji is tiny. When minimized and gziped, standalone version is less than 1K, full version including dependencies (without jQuery) is around 1.8K.
 
@@ -46,6 +46,8 @@ Class(Kanji, {
   }
 });
 ```
+
+You can find a complete sample under sample/ in this repository. A working version of it is hosted [here]().
 
 ## Declarative API
 
