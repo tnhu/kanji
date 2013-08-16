@@ -1,6 +1,15 @@
 /* jshint newcap:false */
 /* global Kanji:true, Class, console, jsface, setTimeout, document */
 
+// jsface.js
+(function(h,u,v,w,z,A,x,l){function y(a){return a&&typeof a===u&&!(typeof a.length===v&&!a.propertyIsEnumerable(w))}function q(a){return a&&typeof a===u&&typeof a.length===v&&!a.propertyIsEnumerable(w)}function r(a){return a&&"function"===typeof a}function s(a){return r(a)&&a.prototype&&a===a.prototype.constructor}function t(a,b,d){function m(b,f){d&&d.hasOwnProperty(b)||(a[b]=f,c&&(g[b]=f))}if(q(b))for(var f=b.length;0<=--f;)t(a,b[f],d);else{d=d||{constructor:1,$super:1,prototype:1,$superb:1};var c=
+s(a),f=s(b),g=a.prototype,k,n;if(y(b))for(k in b)m(k,b[k]);if(f)for(k in n=b.prototype,n)m(k,n[k]);c&&f&&t(g,b.prototype,d)}}function p(a,b){b||(a=(b=a,0));var d,m,f,c,g,k,n=0,e,h={constructor:1,$singleton:1,$statics:1,prototype:1,$super:1,$superp:1,main:1};g=p.overload;var l=p.plugins;b=("function"===typeof b?b():b)||{};d=b.hasOwnProperty("constructor")?b.constructor:0;m=b.$singleton;f=b.$statics;for(c in l)h[c]=1;d=m?{}:d?g?g("constructor",d):d:function(){};g=m?d:d.prototype;for(k=(a=!a||q(a)?a:
+[a])&&a.length;n<k;){e=a[n++];for(c in e)h[c]||(g[c]=e[c],m||(d[c]=e[c]));for(c in e.prototype)h[c]||(g[c]=e.prototype[c])}for(c in b)h[c]||(g[c]=b[c]);for(c in f)d[c]=g[c]=f[c];m||(e=a&&a[0]||a,d.$super=e,d.$superp=e&&e.prototype?e.prototype:e);for(c in l)l[c](d,a,b);r(b.main)&&b.main.call(d,d);return d}p.plugins={};l={Class:p,extend:t,isMap:y,isArray:q,isFunction:r,isString:function(a){return"[object String]"===z.apply(a)},isClass:s};"undefined"!==typeof module&&module.exports?module.exports=l:
+(x=h.Class,h.Class=p,h.jsface=l,l.noConflict=function(){h.Class=x})})(this,"object","number","length",Object.prototype.toString);
+
+// jsface.ready.js
+(function(a){a=a.jsface||require("./jsface");var p=a.isFunction,k=[],l=0;a.Class.plugins.$ready=function q(c,b,a,r){for(var f=a.$ready,d=b?b.length:0,m=d,n=d&&b[0].$super,g,e,h;d--;)for(e=0;e<l&&(h=k[e],g=b[d],g===h[0]&&(h[1].call(g,c,b,a),m--),m);e++);n&&q(c,[n],a,!0);!r&&p(f)&&(f.call(c,c,b,a),k.push([c,f]),l++)}})(this);
+
 /**
  * Kanji (感じ feeling, sense, impression) declarative component framework
  *
