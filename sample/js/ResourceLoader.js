@@ -20,14 +20,17 @@ LI.ResourceLoader = Class(LI.Component, {
 
         switch (type) {
         case 'js':
+          this.log('ResourceLoader: load script', url);
           $.getScript(url);
           break;
 
         case 'css':
           head.append("<link rel='stylesheet' type='text/css' href='"  + url + "' />");
+          this.log('ResourceLoader: load stylesheet', url);
           break;
 
         case 'img':
+          this.log('ResourceLoader: load image', url);
           new Image().src = url;
           break;
         }

@@ -5,7 +5,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background: url(http://osxdaily.com/wp-content/uploads/2011/10/NSTexturedFullScreenBackgroundColor.png) repeat;
+  background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/linen-texture.jpg) repeat;
 }
 
 .resource-loader {
@@ -64,6 +64,7 @@ button:active {
 
 .page {
   display: block;
+  box-shadow: 0px 5px 25px #000;
 }
 
 .view.active {
@@ -142,4 +143,12 @@ button:active {
   right: 100px;
   width: 133px;
   border-radius: 133px;
+}
+
+.bt-request {
+  bottom: 164px;
+  height: 46px;
+  left: 10px;
+  width: 313px;
+  border-radius: 4px;
 }

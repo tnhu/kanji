@@ -6,12 +6,7 @@ Class(Kanji, {
    * @param any
    */
   log: function() {
-    var log = $("#log");
-    $([ '<p>', [].slice.call(arguments).join(' '), '</p>' ].join('')).appendTo(log);
-
-    log.animate({
-      scrollTop:  log[0].scrollHeight
-    }, 250);
+    this.notify('log.info', [].slice.call(arguments).join(' '));
   },
 
   /**
