@@ -26,13 +26,16 @@ Class(function() {
       isFunction          = jsface.isFunction,
       $                   = jQuery,
       timeout             = setTimeout,
+      slice               = [].slice,
       parseJSON           = (typeof JSON === 'object') && JSON.parse || $.parseJSON;  // fallback to jQuery.parseJSON if JSON does not exist
 
   /**
    * Log an error message, params as console.log
    */
   function error() {
-    console.log('ERROR:', [].slice.call(arguments).join(' '));
+    var msg = slice.call(arguments).join(' ');
+    Kanji.notify('log.error', msg);              // notify a 'log.error' event, hope there are some listener
+    console.log('ERROR:', msg);                  // and also a console message
   }
 
   /**
@@ -168,7 +171,31 @@ Class(function() {
       initComponent: initComponent,
 
       // TODO a better name
-      initAllLazy: initAllLazy
+      initAllLazy: initAllLazy,
+
+      /**
+       * Notify listeners of an event
+       * @param eventId event id
+       * @param any...  parameters
+       */
+      notify: function() {
+        var args          = slice.call(arguments),
+            eventId       = args.shift(),
+            instanceRefs  = repository.instanceRefs,
+            instanceId, instance, listeners, event;
+
+        for (instanceId in instanceRefs) {
+          instance  = instanceRefs[instanceId];
+          listeners = instance.listeners;
+
+          for (event in listeners) {
+            if (event === eventId) {
+              listeners[event].apply(instance, args);
+              break; // event is unique so terminate looping, turn to next instance
+            }
+          }
+        }
+      }
     },
 
     /**
@@ -178,6 +205,11 @@ Class(function() {
      */
     init: function(element, config) {
     },
+
+    /**
+     * Event listeners as pair of eventId: handler()
+     */
+    listeners: 0,
 
     /*
      * Ready handler: capture sub-class definitions, save in repository and do
@@ -231,7 +263,13 @@ Class(function() {
           // component is not initialized, do lazy initializaion
           if ( !componentId || !instance) {
             instance = initComponent(parent);
-            fn       = instance && action && instance[action];
+
+            // no component implementation found: return. Error reporting happened on initComponent()
+            if ( !instance) {
+              return;
+            }
+
+            fn = instance && action && instance[action];
           }
 
           // TODO caching json on action: Parsing everytime seems costly

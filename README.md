@@ -154,6 +154,38 @@ MyExampleComponent = Class(Kanji, {
 });
 ```
 
+## Inter-component communication
+
+Use notify() to send notifications.
+
+``` js
+Class(Kanji, {
+  componentId: "MyExampleComponent",
+
+  onHi: function(button, container, config) {
+    this.notify("log.info", "Say hi");
+  },
+
+  onBye: function(button, container, config) {
+    this.notify("log.info", "Say bye");
+  }
+});
+```
+
+Listeners:
+
+``` js
+Class(Kanji, {
+  componentId: "Logger",
+
+  listeners: {
+    "log.info": function() {
+      // do something when being notified
+    }
+  }
+});
+```
+
 ## Shared instance
 
 As being said, by default, an instance of the component class is instantiated per each declared DOM elememt. Kanji supports shared instance where only one instance of the component is instantiated for all declared DOM elements. Enabling shared instance by adding componentType="shared" when declaring your component.
