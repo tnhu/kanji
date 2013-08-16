@@ -47,7 +47,7 @@ Class(Kanji, {
 });
 ```
 
-You can find a complete sample under sample/ in this repository. A working version of it is hosted [here]().
+You can find a complete sample under sample/ in this repository. A working version of it is hosted [here](http://bit.ly/17uwWm3).
 
 ## Declarative API
 
