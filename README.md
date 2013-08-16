@@ -7,6 +7,8 @@ Kanji 感じ
 
 Kanji is a web declarative component framework. The idea behind Kanji is when develop a web component, HTML and CSS come first, then JavaScript. Kanji's mission is to help you to build web components fast, easy, clean, extensible, and testable.
 
+Kanji is tiny. When minimized and gziped, standalone version is less than 1K, full version including dependencies (without jQuery) is around 1.8K.
+
 ## Setup
 
 You can import Kanji and its dependencies separately:
