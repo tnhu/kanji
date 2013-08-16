@@ -74,7 +74,7 @@ If you want to pass an extra parameter/configuration into your component. Declar
 </div>
 ```
 
-A component can include other components.
+Components can be nested.
 
 ``` html
 
