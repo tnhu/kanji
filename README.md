@@ -11,7 +11,7 @@ Kanji is tiny. When minimized and gziped, standalone version is less than 1K, fu
 
 ## Setup
 
-You can import Kanji and its dependencies separately:
+In your webpage, import Kanji and its dependencies separately:
 
 ``` html
 <script src="lib/jquery.js" type="text/javascript"></script>
@@ -20,7 +20,7 @@ You can import Kanji and its dependencies separately:
 <script src="kanji.js" type="text/javascript"></script>
 ```
 
-Or import Kanji full version which includes jsface and jsface.ready:
+Or import Kanji full which includes jsface and jsface.ready:
 
 ``` html
 <script src="lib/jquery.js" type="text/javascript"></script>
@@ -167,7 +167,7 @@ MyExampleComponent = Class(Kanji, {
 
 ## Inheritance
 
-Powered by [jsface](https://github.com/tannhu/jsface), Kanji allows multiple level inheritance. Subclass can override and invoke parent's actions.
+Powered by [jsface](https://github.com/tannhu/jsface), Kanji allows multiple level inheritance. Subclass can override and invoke parent's actions (methods).
 
 ``` js
 Component = Class(Kanji, {
