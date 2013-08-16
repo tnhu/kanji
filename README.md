@@ -47,8 +47,6 @@ Class(Kanji, {
 });
 ```
 
-That's it. It just works!
-
 ## Declarative API
 
 ### Declare a component
@@ -162,6 +160,42 @@ By default, an instance of the component class will be created per each declared
 MyExampleComponent = Class(Kanji, {
   componentId: "MyExampleComponent",
   componentType: "shared"
+});
+```
+
+## Inheritance
+
+Powered by [jsface](https://github.com/tannhu/jsface), Kanji allows multiple level inheritance. Subclass can override and invoke parent's actions.
+
+``` js
+Component = Class(Kanji, {
+  componentId: "Component",
+
+  onModal: function(button, container, config) {
+    // ...
+  }
+});
+
+Dialog = Class(Component, {
+  componentId: "Dialog",
+
+  onModal: function(button, container, config) {
+    // do something specificly for Dialog
+
+    // call Component's onModal
+    Dialog.$superp.onModal.call(this, button, container, config);
+  }
+});
+
+LoginDialog = Class(Component, {
+  componentId: "LoginDialog",
+
+  onModal: function(button, container, config) {
+    // do something specificly for LoginDialog
+
+    // call Dialog's onModal
+    LoginDialog.$superp.onModal.call(this, button, container, config);
+  }
 });
 ```
 
