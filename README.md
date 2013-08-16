@@ -5,7 +5,7 @@ Kanji 感じ
 
 ## What is Kanji?
 
-Kanji is a web declarative component framework. The idea behind Kanji is when develop a web component, HTML and CSS come first, then JavaScript only gets involved when user interacting happens. Kanji's mission is to help you to build web components fast, easy, elegant, extensible, and testable.
+Kanji is a web declarative component framework. The idea behind Kanji is when you develop a web component, HTML and CSS come first, then JavaScript only gets involved when user interacting happens. Kanji's mission is to help you to build web components fast, easy, elegant, extensible, and testable.
 
 Kanji is tiny. When minimized and gziped, standalone version is less than 1K, full version including dependencies (without jQuery) is around 1.8K.
 
@@ -60,7 +60,7 @@ Simply add data-com="YourComponentId" into any HTML elements. For example:
 </div>
 ```
 
-By default, all components are lazy loaded. Meaning the JavaScript instance of the component will be created on demand, whenever an event happens inside it. If you want your component to be initialized when its DOM element is ready, add data-lazy="false".
+By default, all components are lazy instantiated. Meaning the JavaScript instance of the component will be created on demand, whenever an event happens inside it. If you want your component to be initialized when its DOM element is ready, add data-lazy="false".
 
 ``` html
 <div data-com="MyExampleComponent" data-lazy="false">
@@ -92,7 +92,7 @@ A component can include other components.
 
 ### Declare actions
 
-Actions happen when users click (or touch) on an element inside a component. By default, <button> and elements have role="button" are action targets. You declare behavior of an action by specifying data-act="actionName".
+Actions happen when users click (or touch) on an element inside a component. By default, button and elements have role="button" are action targets. You declare behavior of an action by specifying data-act="actionName".
 
 ``` html
 <div data-com="MyExampleComponent" data-lazy="false">
