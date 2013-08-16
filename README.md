@@ -3,8 +3,6 @@ Kanji 感じ
 
 [![Build Status](https://travis-ci.org/tnhu/kanji.png?branch=master)](https://travis-ci.org/tnhu/kanji)
 
-## What is Kanji?
-
 Kanji is a web declarative component framework. The idea behind Kanji is when you develop a web component, HTML and CSS come first, then JavaScript only gets involved when user interacting happens. Kanji's mission is to help you to build web components fast, easy, elegant, extensible, and testable.
 
 Kanji is tiny. When minimized and gziped, standalone version is less than 1K, full version including dependencies (without jQuery) is around 1.8K.
