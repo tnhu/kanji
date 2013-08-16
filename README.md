@@ -133,13 +133,13 @@ MyExampleComponent = Class(Kanji, {
 
 In which:
 
-* container: jQuery object represents the compnent element
+* container: jQuery object represents the component element
 * config: configuration declared in the component (if any)
 
 Map your declared actions to your component's methods by implementing "on" + action methods. When an action accurs, there are three parameters will be passed to its handler:
 
 * button: jQuery object represents the button (target element)
-* container: jQuery object represents the compnent element
+* container: jQuery object represents the component element
 * config: configuration declared in the button (if any)
 
 ``` js
