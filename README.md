@@ -92,7 +92,7 @@ Components can be nested.
 
 ### Declare actions
 
-Actions happen when users click (or touch) on an element inside a component. By default, button and elements have role="button" are action targets. You declare behavior of an action by specifying data-act="actionName".
+Actions happen when users click (or touch) on an element inside a component. By default, button and elements have role="button" are action sources. You declare behavior of an action by specifying data-act="actionName".
 
 ``` html
 <div data-com="MyExampleComponent" data-lazy="false">
@@ -156,7 +156,7 @@ MyExampleComponent = Class(Kanji, {
 
 ## Inter-component communication
 
-Use notify() to send notifications.
+A component uses notify() to send notifications.
 
 ``` js
 Class(Kanji, {
@@ -172,7 +172,7 @@ Class(Kanji, {
 });
 ```
 
-Listeners:
+Any components want to capture a notification need to implement a listener. For example, Logger listens to "log.info" to do some logging:
 
 ``` js
 Class(Kanji, {
