@@ -60,7 +60,7 @@ Simply add data-com="YourComponentId" into any HTML elements. For example:
 </div>
 ```
 
-By default, all components are lazy instantiated. Meaning the JavaScript instance of the component will be created on demand, whenever an event happens inside it. If you want your component to be initialized when its DOM element is ready, add data-lazy="false".
+By default, all components are lazy instantiated. Meaning the JavaScript instance of the component will be created on demand, whenever an event happens inside it. If you want your component to be initialized when its DOM fragment is ready, add data-lazy="false".
 
 ``` html
 <div data-com="MyExampleComponent" data-lazy="false">
@@ -188,7 +188,7 @@ Class(Kanji, {
 
 ## Shared instance
 
-As being said, by default, an instance of the component class is instantiated per each declared DOM elememt. Kanji supports shared instance where only one instance of the component is instantiated for all declared DOM elements. Enabling shared instance by adding componentType="shared" when declaring your component.
+As being said, by default, an instance of the component class is instantiated per each declared DOM fragment. Kanji supports shared instance where only one instance of the component is instantiated for all declared fragments. Enabling shared instance by adding componentType="shared" when declaring your component.
 
 ``` js
 MyExampleComponent = Class(Kanji, {
