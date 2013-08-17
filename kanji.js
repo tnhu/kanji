@@ -123,21 +123,6 @@ Class(function() {
   }
 
   /**
-   * Initialize non-lazy components (data-lazy="false")
-   * TODO better name
-   */
-  function initAllLazy() {
-    $(SEL_COMPONENT).each(function() {
-      var container = $(this);
-
-      // not want lazy loading? then initialize the component
-      if (container.data('lazy') === false) {
-        initComponent(container);
-      }
-    });
-  }
-
-  /**
    * Schedule garbage collection
    */
   function gc() {
@@ -171,9 +156,6 @@ Class(function() {
        * @return reference to instance of the component
        */
       initComponent: initComponent,
-
-      // TODO a better name
-      initAllLazy: initAllLazy,
 
       /**
        * Notify listeners of an event
