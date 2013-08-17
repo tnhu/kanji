@@ -259,7 +259,7 @@ When you click button "Say hi" on the first card (or any card), first instance o
 
 What happens if you specify componentType="shared" in Card? When you first click "Say hi" on any card, one instance of Card is instantiated and this instance will be shared accross all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
 
-Kanji has a garbage collector. When all the DOM elements represent a component are detached, all of its instances will be removed. In the other word, components can be attached and detached as will.
+Kanji has a garbage collector. When all the DOM fragments represent a component are detached, all of its instances will be removed. In the other word, components can be attached and detached as will.
 
 ## Best practice
 
