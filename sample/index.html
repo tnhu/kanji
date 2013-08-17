@@ -50,19 +50,19 @@
     <button class="bt-wardrope" data-act="switchView" data-cfg="wardrope">Go to Wardrope</button>
 
     <!--
-      ResourceLoader: there's no UI interaction, lazy is false, the component gets control
+      ResourceLoader: there's no UI interaction, data-lazy="false", the component gets control
       immediately when element "resource-loader" is ready
       @see ResourceLoader.js
     -->
     <div class="resource-loader" data-com="ResourceLoader" data-lazy="false" data-cfg="{
         'js' : [
-          'http://dl.dropboxusercontent.com/u/7677927/ui-testings/js/some-script.js',
+          'js/Component.js',
+          'js/Logger.js',
           'js/Page.js',
           'js/StylistView.js'
         ],
         'css': [
-          'http://dl.dropboxusercontent.com/u/7677927/ui-testings/css/some-css.css',
-          'https://raw.github.com/twbs/bootstrap/3.0.0-wip/dist/css/bootstrap.css'
+          'http://dl.dropboxusercontent.com/u/7677927/ui-testings/css/some-css.css'
         ],
         'img': [
           'https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/2.png',
@@ -83,7 +83,7 @@
   </div>
 
   <!--
-    Import Kanji and its dependency (import full version, so only jQuery required)
+    Import Kanji and its dependencies
   -->
   <script src="../lib/jquery.min.js"></script>
   <script src="../lib/jsface.js"></script>
@@ -91,10 +91,8 @@
   <script src="../kanji.js"></script>
 
   <!--
-    Import essential components. ResourceLoader helps to load other component scripts
+    Just need to import ResourceLoader. It loads other components
   -->
-  <script src="js/Component.js"></script>
-  <script src="js/Logger.js"></script>
   <script src="js/ResourceLoader.js"></script>
 </body>
 </html>

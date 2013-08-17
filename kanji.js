@@ -4,7 +4,7 @@
 /**
  * Kanji 感じ - web declarative component framework
  *
- * @author Tan Nhu, tannhu __@__ gmail __.__ com
+ * @author Tan Nhu, http://lnkd.in/tnhu
  * @licence MIT
  * @dependency jsface, jsface.ready, jQuery, JSON || jQuery.parseJSON
  */
@@ -27,6 +27,8 @@ Class(function() {
       $                   = jQuery,
       timeout             = setTimeout,
       slice               = [].slice,
+      isDomReady          = 0,
+      lazyComponentSelectorQueue = [],
       parseJSON           = (typeof JSON === 'object') && JSON.parse || $.parseJSON;  // fallback to jQuery.parseJSON if JSON does not exist
 
   /**
@@ -216,7 +218,7 @@ Class(function() {
      * some initialization if needed
      */
     $ready: function(clazz, parent, api) {
-      var componentId;
+      var componentId, componentSelector;
 
       if (this !== clazz) {
         componentId = api.componentId;
@@ -224,6 +226,17 @@ Class(function() {
         if (componentId) {
           if ( !repository[componentId]) {
             repository[componentId] = clazz;
+            componentSelector       = [ '[data-com="', componentId, '"][data-lazy="false"]' ].join('');
+
+            // do initialization for declared data-lazy="false" fragments if DOM is ready
+            // otherwise, put component selector in queue for later
+            if (isDomReady) {
+              $(componentSelector).each(function() {
+                initComponent($(this));
+              });
+            } else {
+              lazyComponentSelectorQueue.push(componentSelector);
+            }
 
             // save component type if it's specified in api
             if (api.componentType) {
@@ -243,8 +256,25 @@ Class(function() {
       Kanji = clazz;
 
       $.fn.ready(function() {
-        var _document = $(document);
-        initAllLazy();
+        var _document = $(document),
+            len       = lazyComponentSelectorQueue.length,
+            i         = 0,
+            container, count, j;
+
+        // mark flag that DOM is ready
+        isDomReady = 1;
+
+        while (i < len) {
+          container = $(lazyComponentSelectorQueue[i++]);
+          count     = container.length;
+          j         = 0;
+
+          if (count) {
+            while (j < count) {
+              initComponent($(container[j++]));
+            }
+          }
+        }
 
         //
         // Bind events on button, and role='button'... elements (based on SELECTOR)
@@ -283,10 +313,14 @@ Class(function() {
         });
 
         //
-        // Bind keydown, keyup... on input and textarea
+        // TODO Bind keydown, keyup... on input and textarea
         //
-        _document.on('keydown', 'input', function(event) {
+        _document.on('keydown', 'input,textarea', function(event) {
         });
+
+        //
+        // TODO Support hover state
+        //
 
         //
         // Schedule garbage collection on detached DOM elements (DOM detach -> remove instance reference)

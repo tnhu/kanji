@@ -1,9 +1,16 @@
 /* jshint newcap:false */
 /* global Class, Kanji, console, LI, $, Image */
 
-LI.ResourceLoader = Class(LI.Component, {
-  componentId   : 'ResourceLoader',
-  componentType : 'shared',             /* one shared instance */
+/**
+ * ResourceLoader loads stylesheets, scripts, and images declared in data-cfg.
+ *
+ * @author Tan Nhu, http://lnkd.in/tnhu
+ * @licence MIT
+ * @dependency jsface, Kanji, jQuery
+ */
+Class(Kanji, {
+  componentId  : 'ResourceLoader',
+  componentType: 'shared',             /* one shared instance */
 
   init: function(element, config) {
     var type, i, len, items, url,
@@ -20,17 +27,14 @@ LI.ResourceLoader = Class(LI.Component, {
 
         switch (type) {
         case 'js':
-          this.log('ResourceLoader: load script', url);
           $.getScript(url);
           break;
 
         case 'css':
           head.append("<link rel='stylesheet' type='text/css' href='"  + url + "' />");
-          this.log('ResourceLoader: load stylesheet', url);
           break;
 
         case 'img':
-          this.log('ResourceLoader: load image', url);
           new Image().src = url;
           break;
         }
