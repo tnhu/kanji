@@ -131,8 +131,6 @@ MyExampleComponent = Class(Kanji, {
 });
 ```
 
-In which:
-
 * container: jQuery object represents the component element (HTML)
 * config: configuration declared in the component (if any)
 
