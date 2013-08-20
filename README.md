@@ -7,6 +7,8 @@ Kanji is a web declarative component framework. The idea behind Kanji is when yo
 
 Kanji is tiny. When minimized and gziped, standalone version is about 1K, full version including dependencies (without jQuery) is less than 2K.
 
+***NOTE**: This is a proof of concept prototyping. API is subjected to change.*
+
 ## Setup
 
 In your webpage, import Kanji and its dependencies separately:
