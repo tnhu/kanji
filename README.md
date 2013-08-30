@@ -148,7 +148,7 @@ This data attribute is used to pass an extra parameter/configuration into your c
 
 #### data-act
 
-Declare an action on any element inside a component (including component's container itself) by using data-act attribute.
+Declare action(s) on any element inside a component (including component's container itself) by using data-act attribute.
 
 **Syntax**:
 
@@ -157,6 +157,8 @@ data-act="event1[,event2...]:handler|eventN:handlerN|..."
 ```
 
 If event is not specify but only handler (i.e: data-act="login") then handler will be bound to 'click' event or 'touchend' event (on mobile devices). event can be any [DOM events that jQuery supports](http://api.jquery.com/category/events/).
+
+Sample of data-act declaration with multiple events and handlers.
 
 ``` html
 <div data-com="MyExampleComponent" data-act="mouseenter:preloadData">
