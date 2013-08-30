@@ -8,7 +8,7 @@ Kanji is a web declarative component framework. The idea behind Kanji is when yo
 Kanji's design philosophy:
 
 1. HTML and CSS first. A web component starts with its viewable presentation. Even with JavaScript disabled, users are able to view the content. JavaScript involves only when needed.
-2. HTML should be readable in a way that it's connected to both CSS (how the content looks) and JavaScript (which does what when an event happens).
+2. HTML should be readable in the way that it's connected to both CSS (how the content looks) and JavaScript (which does what when an event happens).
 3. Event bindings among DOM elements and JavaScript handlers should not be verbose and painful.
 4. A component should be an isolated piece of software. Components interact with other components by events, not APIs.
 
@@ -89,7 +89,7 @@ Class(Kanji, {          // a component is a sub-class of Kanji
 });
 ```
 
-Import the script in the same page with the HTML fragment. When you start interacting with the form, you notice the component is instantiated and its handlers are executed (open your browser JavaScript console first). You can play with [this sample online at jsfiddle](http://jsfiddle.net/tannhu/H4fTe/6/)
+Import the script in the same page with the HTML fragment. When you start interacting with the form, you notice the component is instantiated and its handlers are executed (open your browser JavaScript console first). You can play with [this sample online at jsfiddle](http://jsfiddle.net/tannhu/H4fTe/6/), another more comprehensive sample can be found [here](http://jsfiddle.net/tannhu/ysXRk/3/).
 
 ## Reference
 
