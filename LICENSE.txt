@@ -1,4 +1,4 @@
-Copyright (c) 20013 Tan Nhu
+Copyright (c) 20013 LinkedIn Corporation
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
