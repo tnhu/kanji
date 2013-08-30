@@ -8,7 +8,7 @@ Kanji is a web declarative component framework. The idea behind Kanji is when yo
 Kanji's design philosophy:
 
 1. HTML and CSS first. A web component starts with its viewable presentation. Even with JavaScript disabled, users are able to view the content. JavaScript involves only when needed.
-2. Event bindings among DOM elements and JavaScript handlers should not be verbosed and painful.
+2. Event bindings among DOM elements and JavaScript handlers should not be verbose and painful.
 3. A component should be an isolated piece of software. Components interact with other components by events, not APIs.
 
 Kanji is tiny. When being minimized and gziped, standalone version is about 1K, full version including dependencies (without jQuery) is less than 2K.
@@ -191,7 +191,7 @@ MyExampleComponent = Class(Kanji, {
 * container: jQuery object represents the component element (HTML)
 * config: configuration declared in the component (if any)
 
-Map your declared actions to your component's methods by implementing "on" + action methods. When an action accurs, there are two parameters will be passed to its handler:
+Map your declared actions to your component's methods by implementing "on" + action methods. When an action occurs, there are two parameters will be passed to its handler:
 
 * event: event object
 * button: jQuery object represents the button (target element)
@@ -245,7 +245,7 @@ Note that listeners in Kanji are inheritable. If a parent component has some lis
 
 #### Shared instance
 
-By default, an instance of the component class is instantiated per each declared DOM fragment. Kanji supports shared instance where only one instance of the component is instantiated for all declared fragments. Enabling shared instance by adding type="shared" when declaring your component.
+By default, an instance of the component class is instantiated per each declared DOM fragment. Kanji supports shared instance where only one instance of the component is instantiated for all declared fragments. Enabling shared instance by adding type="shared" when implementing your component.
 
 ``` js
 MyExampleComponent = Class(Kanji, {
