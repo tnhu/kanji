@@ -8,11 +8,8 @@ html, body {
   background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/linen-texture.jpg) repeat;
 }
 
-.resource-loader {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  overflow: hidden;
+.hidden {
+  display: none;
 }
 
 #log {

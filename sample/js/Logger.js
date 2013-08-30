@@ -1,6 +1,6 @@
 LI.Logger = Class(LI.Component, {
-  componentId: 'Logger',
-  componentType: 'shared',
+  id  : 'Logger',
+  type: 'shared',
 
   /** @overide */
   init: function(container, config) {
@@ -15,25 +15,25 @@ LI.Logger = Class(LI.Component, {
 
     $([ '<p>', msg, '</p>' ].join('')).appendTo(log);
 
-    log.animate({ scrollTop: log[0].scrollHeight }, 250);
+    log.animate({ scrollTop: log[0].scrollHeight }, 0);
   },
 
   /**
    * Listen to logging event
    */
   listeners: {
-    'log.info': function(msg) {
+    'log:info': function(msg) {
       this.log(msg);
     },
 
-    'log.debug': function() {
+    'log:debug': function() {
       var args = [].slice.call(arguments);
 
       args.unshift('DEBUG:');
       this.log.call(this, args.join(' '));
     },
 
-    'log.error': function() {
+    'log:error': function() {
       var args = [].slice.call(arguments);
 
       args.unshift('ERROR:');

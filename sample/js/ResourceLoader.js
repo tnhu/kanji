@@ -9,8 +9,8 @@
  * @dependency jsface, Kanji, jQuery
  */
 Class(Kanji, {
-  componentId  : 'ResourceLoader',
-  componentType: 'shared',             /* one shared instance */
+  id  : 'ResourceLoader',
+  type: 'shared',             /* one shared instance */
 
   init: function(element, config) {
     var type, i, len, items, url,

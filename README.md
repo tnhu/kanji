@@ -3,83 +3,120 @@ Kanji 感じ
 
 [![Build Status](https://travis-ci.org/tnhu/kanji.png?branch=master)](https://travis-ci.org/tnhu/kanji)
 
-Kanji is a web declarative component framework. The idea behind Kanji is when you develop a web component, HTML and CSS should come first, then JavaScript only gets involved when user interacting happens. Kanji defines a set of HTML data attributes and simple JavaScript APIs to build elegant, extensible, and testable web components.
+Kanji is a web declarative component framework. The idea behind Kanji is when you develop a web component, HTML and CSS should come first, then JavaScript only gets involved when user interactions happen. Kanji defines a tiny set of HTML data attributes and simple JavaScript APIs to build elegant, standardized, extensible, and testable web components.
 
-Kanji is tiny. When minimized and gziped, standalone version is about 1K, full version including dependencies (without jQuery) is less than 2K.
+Kanji's design philosophy:
+
+1. HTML and CSS first. A web component starts with its viewable presentation. Even with JavaScript disabled, users are able to view the content. JavaScript involves only when needed.
+2. Event bindings among DOM elements and JavaScript handlers should not be verbosed and painful.
+3. A component should be an isolated piece of software. Components interact with other components by events, not APIs.
+
+Kanji is tiny. When being minimized and gziped, standalone version is about 1K, full version including dependencies (without jQuery) is less than 2K.
 
 **NOTE**: This is a proof of concept prototyping. API is subjected to change.
 
 ## Setup
 
-In your webpage, import Kanji and its dependencies separately:
+In your web page, import Kanji and its dependencies separately:
 
 ``` html
-<script src="lib/jquery.js" type="text/javascript"></script>
-<script src="lib/jsface.js" type="text/javascript"></script>
-<script src="lib/jsface.ready.js" type="text/javascript"></script>
-<script src="kanji.js" type="text/javascript"></script>
+<script src="lib/jquery.js"></script>
+<script src="lib/jsface.js"></script>
+<script src="lib/jsface.ready.js"></script>
+<script src="kanji.js"></script>
 ```
 
 Or import Kanji full which includes jsface and jsface.ready:
 
 ``` html
-<script src="lib/jquery.js" type="text/javascript"></script>
-<script src="kanji-full.js" type="text/javascript"></script>
+<script src="lib/jquery.js"></script>
+<script src="kanji-full.js"></script>
 ```
 
-## Trivial sample
+## Short tutorial
 
-Assume you have an HTML fragment like below. You declare it as a component by specifying attribute data-com="YourComponentId".
+Assume you have an HTML fragment like below for a login form with two input fields and one submit button.
 
 ``` html
-<div data-com="MyComponent">
-  <button data-act="hi">Say hi</button>
-</div>
+<form>
+  <input name="username"></input>
+  <input type="password" name="password"></input>
+  <input type="submit" value="Login"></input>
+</form>
 ```
 
-Next you capture event when users interact (click or touch) with the button in the component's implementation.
+You declare the fragment as a Kanji component by adding extra information into it.
+
+``` html
+<form data-com="LoginForm" data-cfg="{ 'debug': true }">
+  <input name="username" data-act="keydown:checkUsername"></input>
+  <input type="password" name="password" data-act="keydown:checkPassword"></input>
+  <input type="submit" value="Login" data-act="login"></input>
+</form>
+```
+
+What happens here is you declare the form as a component named "LoginForm" with three actions checkUsername, checkPassword and login. checkUsername is bound to keydown event on the username field, checkPassword handles keydown event on password field and login handles click event on the submit button (click event is default event so you don't have to specify click:login).
+
+Next you implement LoginForm (assume you have it as LoginForm.js):
 
 ``` js
-Class(Kanji, {
-  componentId: "MyComponent",
+Class(Kanji, {                                             // a component is a sub-class of Kanji
+  id   : "LoginForm",                                      // id is component unique identifier
+  debug: false,
 
-  onHi: function() {
-    alert("Hello World!");
+  init: function(form, config) {                           // optional init() method
+    this.debug = config.debug;
+    console.log('initialization');
+  },
+
+  onCheckUsername: function(event, input, form) {          // handler for keydown event on username field
+    if (this.debug) {
+      console.log('checking username');
+    }
+  },
+
+  onCheckPassword: function(event, input, form) {          // handler for keydown event on password field
+    if (this.debug) {
+      console.log('checking password');
+    }
+  },
+
+  onLogin: function(event, input, form) {                  // handler for click/touchend event on button submit
+    if (this.debug) {
+      console.log('about to login');
+    }
+    return false;                                          // prevent form from submitting
   }
 });
 ```
 
-You can find a complete sample under sample/ in this repository. A working version of it is hosted [here](http://bit.ly/17uwWm3).
+Import the script in the same page with the HTML fragment. When you start interacting with the form, you notice the component is instantiated and its handlers are executed. You can play with [this sample online at jsfiddle](http://jsfiddle.net/tannhu/H4fTe/6/)
 
-## Declarative API
+## Reference
 
-### Declare a component
+### Declarative HTML data attributes
 
-Simply add data-com="YourComponentId" into any HTML elements. For example:
+Kanji defines four HTML data attributes to declare component, configuration, action and component instantiation strategy.
+
+Name                                | Required  | Availability  | Default value
+-------------------------------------------------------------------------------
+data-com="ComponentNameAsString"    | yes       | Component     |
+data-cfg="Any"                      | no        | Component     |
+data-act="action(s)"                | no        | Any           |
+data-lazy="false"                   | no        | Component     | true
+
+#### data-com
+
+Add data-com="YourComponentId" into any HTML elements to declare it's a component. For example:
 
 ``` html
 <div data-com="MyExampleComponent">
 </div>
 ```
 
-By default, all components are lazy instantiated. Meaning the JavaScript instance of the component will be created on demand, whenever an event happens inside it. If you want your component to be initialized when its DOM fragment is ready, add data-lazy="false".
+Note that components can be nested.
 
 ``` html
-<div data-com="MyExampleComponent" data-lazy="false">
-</div>
-```
-
-If you want to pass an extra parameter/configuration into your component. Declare it under data-cfg="VALUE". VALUE can be anything.
-
-``` html
-<div data-com="MyExampleComponent" data-lazy="false" data-cfg="{ 'foo': 'bar' }">
-</div>
-```
-
-Components can be nested.
-
-``` html
-
 <div data-com="Page">
   <div data-com="Table">
     <div data-com="Cell">
@@ -92,33 +129,53 @@ Components can be nested.
 </div>
 ```
 
-### Declare actions
+#### data-lazy
 
-Actions happen when users click (or touch) on an element inside a component. By default, button and elements have role="button" are action sources. You declare behavior of an action by specifying data-act="actionName".
+By default, all components are lazy instantiated. Meaning the JavaScript instance of the component will be created on demand, whenever an event happens inside it. If you want your component to be initialized when its DOM fragment is ready, add data-lazy="false".
 
 ``` html
 <div data-com="MyExampleComponent" data-lazy="false">
+</div>
+```
+
+#### data-cfg
+
+If you want to pass an extra parameter/configuration into your component. Declare it under data-cfg="VALUE". VALUE can be anything.
+
+``` html
+<div data-com="MyExampleComponent" data-cfg="{ 'foo': 'bar' }">
+</div>
+```
+
+#### data-act
+
+Declare an action on any element inside a component (including component's container itself) by using data-act attribute.
+
+**Syntax**:
+
+```html
+data-act="event1[,event2...]:handler|eventN:handlerN|..."
+```
+
+If event is not specify but only handler (i.e: data-act="login") then handler will be bound to 'click' event or 'touchend' event (on mobile devices). event can be any [DOM events that jQuery supports](http://api.jquery.com/category/events/).
+
+``` html
+<div data-com="MyExampleComponent" data-act="mouseenter:preloadData">
+  <input data-act="keydown,keyup:type|mouseenter:foo|mouseout:bar"></input>
   <button data-act="hi">Say hi</button>
   <a role="button" data-act="bye">Say bye</a>
 </div>
 ```
 
-Like component declaration, you can add an extra parameter/configuration to your action.
+### Component API
 
-``` html
-<div data-com="MyExampleComponent" data-lazy="false">
-  <button data-act="hi" data-cfg="">Say hi</button>
-  <a role="button" data-act="bye" data-cfg="['foo', 'bar']">Say bye</a>
-</div>
-```
+#### Component implementation
 
-## Component API
-
-A component is a class extends from Kanji with a unique componentId.
+A component is a class extends from Kanji with a unique component id.
 
 ``` js
 MyExampleComponent = Class(Kanji, {
-  componentId: "MyExampleComponent"
+  id: "MyExampleComponent"
 });
 ```
 
@@ -126,7 +183,7 @@ If you want to handle something when component DOM is ready. Implement init() me
 
 ``` js
 MyExampleComponent = Class(Kanji, {
-  componentId: "MyExampleComponent",
+  id: "MyExampleComponent",
 
   init: function(container, config) {
   }
@@ -136,37 +193,37 @@ MyExampleComponent = Class(Kanji, {
 * container: jQuery object represents the component element (HTML)
 * config: configuration declared in the component (if any)
 
-Map your declared actions to your component's methods by implementing "on" + action methods. When an action accurs, there are three parameters will be passed to its handler:
+Map your declared actions to your component's methods by implementing "on" + action methods. When an action accurs, there are two parameters will be passed to its handler:
 
+* event: event object
 * button: jQuery object represents the button (target element)
 * container: jQuery object represents the component element
-* config: configuration declared in the button (if any)
 
 ``` js
 MyExampleComponent = Class(Kanji, {
-  componentId: "MyExampleComponent",
+  id: "MyExampleComponent",
 
-  onHi: function(button, container, config) {
+  onHi: function(event, button, container) {
   },
 
-  onBye: function(button, container, config) {
+  onBye: function(event, button, container) {
   }
 });
 ```
 
-## Inter-component communication
+#### Inter-component communication
 
 A component uses notify() to send notifications.
 
 ``` js
 Class(Kanji, {
-  componentId: "MyExampleComponent",
+  id: "MyExampleComponent",
 
-  onHi: function(button, container, config) {
+  onHi: function(button, container) {
     this.notify("log.info", "Say hi");
   },
 
-  onBye: function(button, container, config) {
+  onBye: function(button, container) {
     this.notify("log.info", "Say bye");
   }
 });
@@ -176,7 +233,7 @@ Any components want to capture a notification need to implement a listener. For 
 
 ``` js
 Class(Kanji, {
-  componentId: "Logger",
+  id: "Logger",
 
   listeners: {
     "log.info": function() {
@@ -186,54 +243,56 @@ Class(Kanji, {
 });
 ```
 
-## Shared instance
+Note that listeners in Kanji are inheritable. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.
 
-As being said, by default, an instance of the component class is instantiated per each declared DOM fragment. Kanji supports shared instance where only one instance of the component is instantiated for all declared fragments. Enabling shared instance by adding componentType="shared" when declaring your component.
+#### Shared instance
+
+By default, an instance of the component class is instantiated per each declared DOM fragment. Kanji supports shared instance where only one instance of the component is instantiated for all declared fragments. Enabling shared instance by adding type="shared" when declaring your component.
 
 ``` js
 MyExampleComponent = Class(Kanji, {
-  componentId: "MyExampleComponent",
-  componentType: "shared"
+  id: "MyExampleComponent",
+  type: "shared"
 });
 ```
 
-## Inheritance and extending
+#### Inheritance and extending
 
 Powered by [jsface](https://github.com/tannhu/jsface), Kanji allows multiple level inheritance. Subclass can override and invoke parent's actions (methods).
 
 ``` js
 Component = Class(Kanji, {
-  componentId: "Component",
+  id: "Component",
 
-  onModal: function(button, container, config) {
+  onModal: function(button, container) {
     // ...
   }
 });
 
 Dialog = Class(Component, {
-  componentId: "Dialog",
+  id: "Dialog",
 
-  onModal: function(button, container, config) {
+  onModal: function(button, container) {
     // do something specificly for Dialog
 
     // call Component's onModal
-    Dialog.$superp.onModal.call(this, button, container, config);
+    Dialog.$superp.onModal.call(this, button, container);
   }
 });
 
 LoginDialog = Class(Component, {
-  componentId: "LoginDialog",
+  id: "LoginDialog",
 
-  onModal: function(button, container, config) {
+  onModal: function(button, container) {
     // do something specificly for LoginDialog
 
     // call Dialog's onModal
-    LoginDialog.$superp.onModal.call(this, button, container, config);
+    LoginDialog.$superp.onModal.call(this, button, container);
   }
 });
 ```
 
-## More about instantiation
+### More about instantiation
 
 By default, Kanji does not do anything until there's a user interaction happens inside the component's HTML fragment. If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that fragment's scope. Imaging you have 100 declarations of a component named "Card":
 
@@ -257,7 +316,7 @@ By default, Kanji does not do anything until there's a user interaction happens 
 
 When you click button "Say hi" on the first card (or any card), first instance of Card is instantiated. When you click "Say hi" on the second card, another instance is instantiated.
 
-What happens if you specify componentType="shared" in Card? When you first click "Say hi" on any card, one instance of Card is instantiated and this instance will be shared accross all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
+What happens if you specify type="shared" in Card? When you first click "Say hi" on any card, one instance of Card is instantiated and this instance will be shared accross all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
 
 Kanji has a garbage collector. When all the DOM fragments represent a component are detached, all of its instances will be removed. In the other word, components can be attached and detached as will.
 
@@ -268,13 +327,13 @@ I would recommend to define a root class component which includes all shared act
 ``` js
 LI = {};
 LI.Component = Class(Kanji, {
-  componentId: "Component",
+  id: "Component",
 
   // shared actions
 });
 
 LI.MyExampleComponent = Class(LI.Component, {
-  componentId: "MyExampleComponent",
+  id: "MyExampleComponent",
 
   // ...
 });

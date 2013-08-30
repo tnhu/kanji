@@ -7,59 +7,64 @@
 </head>
 <body>
   <!-- Page component -->
-  <div class="page" data-com="Page" data-cfg="{ 'debug': true }">
+  <div class="page" data-com="Page" data-cfg="{ 'debug': true }" data-lazy="false">
     <!--
-      Stylist view component
+      Stylist component
       @see Stylist.js
     -->
-    <div class="view stylist active"  data-com="StylistView">
+    <div class="view stylist active" data-com="Stylist" data-lazy="false" data-act="mouseenter:preloadStylist">
       <button class="bt-feedback" data-act="feedback">Leave feedback</button>
-      <button class="bt-email"    data-act="email">Email</button>
+      <button class="bt-email"    data-act="email|mouseenter:trackingEmail|mouseout:trackingEmail">Email</button>
       <button class="bt-call"     data-act="call">Call</button>
       <button class="bt-profile"  data-act="profile">Profile</button>
+
+      <div class="view feedback" data-com="Feedback">
+        <input type="text" class="name" data-act="keydown,keyup:typing"></input>
+        <p>Message:<textarea></textarea></p>
+      </div>
     </div>
 
     <!--
-      Blog view component. It's ok that this component is not implemented
+      Blog component. It's ok that this component is not implemented
     -->
-    <div  class="view blog" data-com="StylistView">
+    <div  class="view blog" data-com="Blog">
     </div>
 
     <!--
-      Featured view component. Kanji logs an error when it found FeatureView is not implemented (data-lazy="false"
-      asks Kanji to load it)
+      Featured component. Kanji does not do anything with a data-lazy="false" component when its class is not available
     -->
-    <div  class="view featured" data-com="FeaturedView" data-lazy="false">
+    <div  class="view featured" data-com="Featured" data-lazy="false">
     </div>
 
     <!--
-      Wardrope view component. It's ok that this component is not implemented
+      Wardrope component. It's ok that this component is not implemented
     -->
-    <div  class="view wardrope" data-com="WardropeView">
+    <div  class="view wardrope" data-com="Wardrope">
       <!-- Kanji notifies an error when interaction happens on this button -->
-      <button class="bt-request" data-act="requestAdvice">Request Outfitting Advice</button>
+      <button class="bt-request" data-act="click:requestAdvice">Request Outfitting Advice</button>
     </div>
 
     <!--
-      Page's tab actions: same action different config
+      Page's tab actions: same action implementation handles all
       @see Page.js
     -->
-    <button class="bt-stylist"  data-act="switchView" data-cfg="stylist">Go to Stylist</button>
-    <button class="bt-blog"     data-act="switchView" data-cfg="blog">Go to Blog</button>
-    <button class="bt-featured" data-act="switchView" data-cfg="featured">Go to Featured</button>
-    <button class="bt-wardrope" data-act="switchView" data-cfg="wardrope">Go to Wardrope</button>
+    <button class="bt-stylist"  data-act="switchView" data-viewid="stylist">Go to Stylist</button>
+    <button class="bt-blog"     data-act="switchView" data-viewid="blog"></button>
+    <button class="bt-featured" data-act="switchView" data-viewid="featured"></button>
+    <button class="bt-wardrope" data-act="switchView" data-viewid="wardrope">Go to Wardrope</button>
 
     <!--
-      ResourceLoader: there's no UI interaction, data-lazy="false", the component gets control
-      immediately when element "resource-loader" is ready
+      ResourceLoader is a non-ui component (there's no UI interaction)
       @see ResourceLoader.js
     -->
-    <div class="resource-loader" data-com="ResourceLoader" data-lazy="false" data-cfg="{
+    <script type="text/kanji" data-com="ResourceLoader" data-lazy="false" data-cfg="{
         'js' : [
           'js/Component.js',
           'js/Logger.js',
           'js/Page.js',
-          'js/StylistView.js'
+          'js/Stylist.js',
+          'js/Feedback.js',
+          'js/Reporter.js'
         ],
         'css': [
           'http://dl.dropboxusercontent.com/u/7677927/ui-testings/css/some-css.css'
@@ -70,7 +75,8 @@
           'https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/4.png'
         ]
       }">
-    </div>
+    </script>
+    <script type="text/kanji" data-com="Reporter" data-lazy="false"></script>
 
     <!--
       Logger component demonstrates inter-communication between components via notify()
