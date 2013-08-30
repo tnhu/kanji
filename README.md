@@ -138,7 +138,7 @@ By default, all components are lazy instantiated. Meaning the JavaScript instanc
 
 #### data-cfg
 
-If you want to pass an extra parameter/configuration into your component. Declare it under data-cfg="VALUE". VALUE can be anything.
+This data attribute is used to pass an extra parameter/configuration into your component. Declare it under data-cfg="VALUE". VALUE can be anything.
 
 ``` html
 <div data-com="MyExampleComponent" data-cfg="{ 'foo': 'bar' }">
