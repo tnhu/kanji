@@ -11,7 +11,7 @@ Kanji's design philosophy:
 2. Event bindings among DOM elements and JavaScript handlers should not be verbose and painful.
 3. A component should be an isolated piece of software. Components interact with other components by events, not APIs.
 
-Kanji is tiny. When being minimized and gziped, standalone version is about 1K, full version including dependencies (without jQuery) is less than 2K.
+Kanji is tiny. When being minimized and gziped, standalone version is about 1.5K, full version including dependencies (without jQuery) is less than 2.5K.
 
 ## Setup
 
@@ -271,7 +271,7 @@ Dialog = Class(Component, {
   id: "Dialog",
 
   onModal: function(button, container) {
-    // do something specificly for Dialog
+    // do something specifically for Dialog
 
     // call Component's onModal
     Dialog.$superp.onModal.call(this, button, container);
@@ -282,7 +282,7 @@ LoginDialog = Class(Component, {
   id: "LoginDialog",
 
   onModal: function(button, container) {
-    // do something specificly for LoginDialog
+    // do something specifically for LoginDialog
 
     // call Dialog's onModal
     LoginDialog.$superp.onModal.call(this, button, container);
@@ -314,7 +314,7 @@ By default, Kanji does not do anything until there's a user interaction happens 
 
 When you click button "Say hi" on the first card (or any card), first instance of Card is instantiated. When you click "Say hi" on the second card, another instance is instantiated.
 
-What happens if you specify type="shared" in Card? When you first click "Say hi" on any card, one instance of Card is instantiated and this instance will be shared accross all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
+What happens if you specify type="shared" in Card? When you first click "Say hi" on any card, one instance of Card is instantiated and this instance will be shared across all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
 
 Kanji has a garbage collector. When all the DOM fragments represent a component are detached, all of its instances will be removed. In the other word, components can be attached and detached as will.
 
