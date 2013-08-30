@@ -25,7 +25,7 @@ In your web page, import Kanji and its dependencies separately:
 <script src="kanji.js"></script>
 ```
 
-Or import Kanji full which includes jsface and jsface.ready:
+Or import Kanji full version which includes jsface and jsface.ready:
 
 ``` html
 <script src="lib/jquery.js"></script>
