@@ -8,10 +8,11 @@ Kanji is a web declarative component framework. The idea behind Kanji is when yo
 Kanji's design philosophy:
 
 1. HTML and CSS first. A web component starts with its viewable presentation. Even with JavaScript disabled, users are able to view the content. JavaScript involves only when needed.
-2. Event bindings among DOM elements and JavaScript handlers should not be verbose and painful.
-3. A component should be an isolated piece of software. Components interact with other components by events, not APIs.
+2. HTML should be readable in a way that it's connected to both CSS (how the content looks) and JavaScript (which does what when an event happens).
+3. Event bindings among DOM elements and JavaScript handlers should not be verbose and painful.
+4. A component should be an isolated piece of software. Components interact with other components by events, not APIs.
 
-Kanji is tiny. When being minimized and gziped, standalone version is about 1.5K, full version including dependencies (without jQuery) is less than 2.5K.
+Kanji is small. When being minimized and gziped, standalone version is about 1.5K, full version including dependencies (without jQuery) is less than 2.5K.
 
 ## Setup
 
@@ -43,7 +44,7 @@ Assume you have an HTML fragment like below for a login form with two input fiel
 </form>
 ```
 
-You declare the fragment as a Kanji component by adding extra information into it.
+You declare the fragment as a Kanji component by adding extra information into it via data attributes (data-*).
 
 ``` html
 <form data-com="LoginForm" data-cfg="{ 'debug': true }">
@@ -53,7 +54,7 @@ You declare the fragment as a Kanji component by adding extra information into i
 </form>
 ```
 
-What happens here is you declare the form as a component named "LoginForm" with three actions checkUsername, checkPassword and login. checkUsername is bound to keydown event on the username field, checkPassword handles keydown event on password field and login handles click event on the submit button (click event is default event so you don't have to specify click:login).
+What happens here is you declare the form as a component named "LoginForm" with three actions *checkUsername*, *checkPassword* and *login*. *checkUsername* is bound to *keydown* event on the username field, *checkPassword* handles *keydown* event on password field and *login* handles *click* event on the submit button (click event is default event so you don't have to specify *click:login*).
 
 Next you implement LoginForm (assume you have it as LoginForm.js):
 
@@ -88,7 +89,7 @@ Class(Kanji, {          // a component is a sub-class of Kanji
 });
 ```
 
-Import the script in the same page with the HTML fragment. When you start interacting with the form, you notice the component is instantiated and its handlers are executed. You can play with [this sample online at jsfiddle](http://jsfiddle.net/tannhu/H4fTe/6/)
+Import the script in the same page with the HTML fragment. When you start interacting with the form, you notice the component is instantiated and its handlers are executed (open your browser JavaScript console first). You can play with [this sample online at jsfiddle](http://jsfiddle.net/tannhu/H4fTe/6/)
 
 ## Reference
 

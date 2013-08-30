@@ -22,8 +22,8 @@ Class(function() {
       SELECTOR_COMPONENT   = '[data-com]',                            // component selector
       SELECTOR_ACTION      = '[data-act]',                            // action selector
 
-      // delegable events (from document), except click and touchend
-      DELEGABLE_EVENTS     = 'blur change contextmenu dblclick error focus focusin focusout keydown keypress keyup load mousedown mouseup resize scroll select submit unload',
+      // delegable events (from document), except click and touchend (unperformant events should be moved to INDELEGABLE_EVENTS)
+      DELEGABLE_EVENTS     = 'blur change contextmenu dblclick error focus focusin focusout keydown keypress keyup load mousedown mouseup resize scroll select submit touchcancel touchleave touchmove touchstart unload',
 
       // indelegable events (delegable but unperformant)
       INDELEGABLE_EVENTS   = { mouseenter:1, mouseout:1, mousemove:1, mouseleave:1, mouseover:1, hover:1 },
