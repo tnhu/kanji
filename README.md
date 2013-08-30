@@ -13,8 +13,6 @@ Kanji's design philosophy:
 
 Kanji is tiny. When being minimized and gziped, standalone version is about 1K, full version including dependencies (without jQuery) is less than 2K.
 
-**NOTE**: This is a proof of concept prototyping. API is subjected to change.
-
 ## Setup
 
 In your web page, import Kanji and its dependencies separately:
@@ -60,32 +58,32 @@ What happens here is you declare the form as a component named "LoginForm" with 
 Next you implement LoginForm (assume you have it as LoginForm.js):
 
 ``` js
-Class(Kanji, {                                             // a component is a sub-class of Kanji
-  id   : "LoginForm",                                      // id is component unique identifier
+Class(Kanji, {          // a component is a sub-class of Kanji
+  id   : "LoginForm",   // id is component unique identifier
   debug: false,
 
-  init: function(form, config) {                           // optional init() method
+  init: function(form, config) {
     this.debug = config.debug;
     console.log('initialization');
   },
 
-  onCheckUsername: function(event, input, form) {          // handler for keydown event on username field
+  onCheckUsername: function(event, input, form) {
     if (this.debug) {
       console.log('checking username');
     }
   },
 
-  onCheckPassword: function(event, input, form) {          // handler for keydown event on password field
+  onCheckPassword: function(event, input, form) {
     if (this.debug) {
       console.log('checking password');
     }
   },
 
-  onLogin: function(event, input, form) {                  // handler for click/touchend event on button submit
+  onLogin: function(event, input, form) {
     if (this.debug) {
       console.log('about to login');
     }
-    return false;                                          // prevent form from submitting
+    return false;
   }
 });
 ```
@@ -98,12 +96,12 @@ Import the script in the same page with the HTML fragment. When you start intera
 
 Kanji defines four HTML data attributes to declare component, configuration, action and component instantiation strategy.
 
-Name                                | Required  | Availability  | Default value
--------------------------------------------------------------------------------
-data-com="ComponentNameAsString"    | yes       | Component     |
-data-cfg="Any"                      | no        | Component     |
-data-act="action(s)"                | no        | Any           |
-data-lazy="false"                   | no        | Component     | true
+| Name                                | Required  | Availability  | Default value   |
+| ----------------------------------- | --------- | ------------- | --------------- |
+| data-com="ComponentNameAsString"    | yes       | Component     |                 |
+| data-cfg="Any"                      | no        | Component     |                 |
+| data-act="action(s)"                | no        | Any           |                 |
+| data-lazy="false"                   | no        | Component     | true            |
 
 #### data-com
 
