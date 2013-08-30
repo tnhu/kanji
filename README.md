@@ -290,6 +290,10 @@ LoginDialog = Class(Component, {
 });
 ```
 
+#### Delegable and indelegable events
+
+TBW
+
 ### More about instantiation
 
 By default, Kanji does not do anything until there's a user interaction happens inside the component's HTML fragment. If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that fragment's scope. Imaging you have 100 declarations of a component named "Card":

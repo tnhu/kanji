@@ -22,7 +22,10 @@ Class(function() {
       SELECTOR_COMPONENT   = '[data-com]',                            // component selector
       SELECTOR_ACTION      = '[data-act]',                            // action selector
 
-      // indelegable events (delegable but huge performant cost)
+      // delegable events (from document), except click and touchend
+      DELEGABLE_EVENTS     = 'blur change contextmenu dblclick error focus focusin focusout keydown keypress keyup load mousedown mouseup resize scroll select submit unload',
+
+      // indelegable events (delegable but unperformant)
       INDELEGABLE_EVENTS   = { mouseenter:1, mouseout:1, mousemove:1, mouseleave:1, mouseover:1, hover:1 },
 
       // error message prefix
@@ -484,8 +487,8 @@ Class(function() {
           actionFlag = false;
         });
 
-        // Bind keydown, keyup
-        $document.on('keydown keyup', function(event) {
+        // Bind delegable events to $document
+        $document.on(DELEGABLE_EVENTS, function(event) {
           return invokeActionHandlerFromEvent(event, event.type);
         });
 
