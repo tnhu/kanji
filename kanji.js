@@ -5,7 +5,7 @@
  * Kanji web declarative component framework.
  *
  * @author Tan Nhu, http://lnkd.in/tnhu
- * @licence MIT
+ * @license MIT
  * @dependency jsface, jsface.ready, jQuery, JSON || jQuery.parseJSON
  */
 Class(function() {
@@ -29,8 +29,9 @@ Class(function() {
       // indelegable events (delegable but unperformant)
       INDELEGABLE_EVENTS   = { mouseenter:1, mouseout:1, mousemove:1, mouseleave:1, mouseover:1, hover:1 },
 
-      // error message prefix
-      ERROR                = '[ERROR] Kanji:',
+      // message prefix
+      KANJI                = 'Kanji:',
+      ERROR                = '[ERROR] ' + KANJI,
 
       // garbage collection settings
       GC_TIMEOUT           = 3000,                                    // checking routine (ms)
@@ -134,7 +135,7 @@ Class(function() {
         instanceId  = $parent.length && $parent.attr(DATA_INSTANCE_ID),
         instance    = instanceId && repository.instanceRefs[instanceId];
 
-    // if instance was not created before and initIfNeeded !== false and parent is a compoent then init the component
+    // if instance was not created before and initIfNeeded !== false and parent is a component then init the component
     if ( !instance && initIfNeeded !== false && $parent.length) {
       instance = initComponentFromContainer($parent);
     }
@@ -173,7 +174,7 @@ Class(function() {
   }
 
   /**
-   * Bind DOM events to component container and its actions HTML elemements which may be not performant
+   * Bind DOM events to component container and its actions HTML elements which may be not performant
    * if being delegated. Events like mouseenter, mouseout are very costly if being delegated to document level.
    * @param meta component metadata
    */
@@ -259,7 +260,7 @@ Class(function() {
     var meta         = elementMetadataOrNil($container),
         instanceRefs = repository.instanceRefs,
         componentId, instanceId, config, Component,
-        type, sharedInstanceInfo, instance;
+        type, sharedInstanceInfo, instance, namespace, eventId, listeners, nsListeners;
 
     if (meta) {
       componentId  = meta.componentId;              // get component identifier
@@ -283,12 +284,25 @@ Class(function() {
           instanceId = instanceId || autoId++;                       // if instanceId exists, use it, otherwise, generate a new instanceId
           instance   = instanceRefs[instanceId] || new Component();  // if instance exists in instanceRefs, reuse it (in case of detach/attach), otherwise, create a new one
           instanceRefs[instanceId] = instance;                       // update instanceRefs
-          instance.namespace       = $container.attr(DATA_NS);
+          namespace                = $container.attr(DATA_NS);
+          instance.namespace       = namespace;
+
+          // transform instance.listeners if namespace is declared
+          // instance.listeners[eventId] -> instance.listeners[eventId + '/' + namespace]
+          if (namespace) {
+            listeners   = instance.listeners;
+            nsListeners = {};
+
+            for (eventId in listeners) {
+              nsListeners[eventId + '/' + namespace] = listeners[eventId];
+            }
+            instance.listeners = nsListeners;
+          }
           break;
         }
 
         // init is called every time, no matter what type is
-        // TODO document about this init() behavior on DOM detach/atach
+        // TODO document about this init() behavior on DOM detach / attach
         instance.init($container, config);
 
         // mark the component is already initialized
@@ -361,6 +375,11 @@ Class(function() {
           if (listeners[eventId]) {
             listeners[eventId].apply(instance, args);
           }
+        }
+
+        // output eventId to console if debug is turned on
+        if (Kanji.debug) {
+          console.log(KANJI, eventId);
         }
       }
     },
