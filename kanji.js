@@ -13,10 +13,11 @@ Class(function() {
       TOUCH_END            = 'touchend',                              // on mobile: translate 'click' to 'touchend' (faster)
 
       // data attribute names
-      DATA_ACTION          = 'data-act',
-      DATA_CONFIG          = 'data-cfg',
       DATA_COMPONENT       = 'data-com',
+      DATA_NS              = 'data-ns',                               // namespace attribute
+      DATA_CONFIG          = 'data-cfg',
       DATA_INSTANCE_ID     = 'data-instance',                         // component instance id (value is auto generated)
+      DATA_ACTION          = 'data-act',
 
       // selectors
       SELECTOR_COMPONENT   = '[data-com]',                            // component selector
@@ -257,9 +258,8 @@ Class(function() {
   function initComponentFromContainer($container) {
     var meta         = elementMetadataOrNil($container),
         instanceRefs = repository.instanceRefs,
-        componentId, instanceId, config, Component, type, sharedInstanceInfo, instance,
-        $hoverChildren,
-        hoverCounter;
+        componentId, instanceId, config, Component,
+        type, sharedInstanceInfo, instance;
 
     if (meta) {
       componentId  = meta.componentId;              // get component identifier
@@ -283,6 +283,7 @@ Class(function() {
           instanceId = instanceId || autoId++;                       // if instanceId exists, use it, otherwise, generate a new instanceId
           instance   = instanceRefs[instanceId] || new Component();  // if instance exists in instanceRefs, reuse it (in case of detach/attach), otherwise, create a new one
           instanceRefs[instanceId] = instance;                       // update instanceRefs
+          instance.namespace       = $container.attr(DATA_NS);
           break;
         }
 
@@ -350,15 +351,15 @@ Class(function() {
             instanceRefs  = repository.instanceRefs,
             instanceId, instance, listeners, event;
 
+        // translate eventId to support namespace (for non-shared components only)
+        eventId = (this.type === 'shared') ? eventId : (this.namespace ? [ eventId, '/', this.namespace ].join('') : eventId);
+
         for (instanceId in instanceRefs) {
           instance  = instanceRefs[instanceId];
           listeners = instance.listeners;
 
-          for (event in listeners) {
-            if (event === eventId) {
-              listeners[event].apply(instance, args);
-              break; // event is unique so terminate looping, turn to next instance
-            }
+          if (listeners[eventId]) {
+            listeners[eventId].apply(instance, args);
           }
         }
       }
