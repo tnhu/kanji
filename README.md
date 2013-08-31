@@ -5,7 +5,7 @@ Kanji 感じ
 
 Kanji is a web declarative component framework. The idea behind Kanji is when you develop a web component, HTML and CSS should come first, then JavaScript only gets involved when user interactions happen. Kanji defines a tiny set of HTML data attributes and simple JavaScript APIs to build elegant, standardized, extensible, and testable web components.
 
-Kanji's design philosophy:
+Design philosophy:
 
 1. HTML and CSS first. A web component starts with its viewable presentation. Even with JavaScript disabled, users are able to view the content. JavaScript involves only when needed.
 2. HTML should be readable in the way that it's connected to both CSS (how the content looks) and JavaScript (which does what when an event happens).
