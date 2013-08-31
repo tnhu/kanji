@@ -212,6 +212,17 @@ MyExampleComponent = Class(Kanji, {
 });
 ```
 
+#### Kanji reserved properties
+
+When implementing your components, note that Kanji reserves these properties for its internal use.
+
+| Name                                | Required  |
+| ----------------------------------- | --------- |
+| id                                  | yes       |
+| type                                | no        |
+| listeners                           | no        |
+| namespace                           | no        |
+
 #### Inter-component communication
 
 A component uses notify() to send notifications.
@@ -245,6 +256,10 @@ Class(Kanji, {
 ```
 
 Note that listeners in Kanji are inheritable. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.
+
+#### Namespacing and listeners
+
+TBW
 
 #### Shared instance
 
