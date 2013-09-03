@@ -194,20 +194,20 @@ MyExampleComponent = Class(Kanji, {
 * container: jQuery object represents the component element (HTML)
 * config: configuration declared in the component (if any)
 
-Map your declared actions to your component's methods by implementing "on" + action methods. When an action occurs, there are two parameters will be passed to its handler:
+Map your declared actions to your component's methods by implementing "on" + action methods. When an action occurs, there are three parameters will be passed to its handler:
 
 * event: event object
-* button: jQuery object represents the button (target element)
+* target: jQuery object represents the target element
 * container: jQuery object represents the component element
 
 ``` js
 MyExampleComponent = Class(Kanji, {
   id: "MyExampleComponent",
 
-  onHi: function(event, button, container) {
+  onHi: function(event, target, container) {
   },
 
-  onBye: function(event, button, container) {
+  onBye: function(event, target, container) {
   }
 });
 ```
@@ -231,11 +231,11 @@ A component uses notify() to send notifications.
 Class(Kanji, {
   id: "MyExampleComponent",
 
-  onHi: function(button, container) {
+  onHi: function(event, target, container) {
     this.notify("log.info", "Say hi");
   },
 
-  onBye: function(button, container) {
+  onBye: function(event, target, container) {
     this.notify("log.info", "Say bye");
   }
 });
@@ -263,7 +263,7 @@ Listeners in Kanji are inherited. If a parent component has some listeners, its 
 
 Instances of non-shared components are able to communicate privately via namespace mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
 
-Give an example ([see online](http://jsfiddle.net/tannhu/AzCdA/1/)), we have a Timer component listens to 'time:show' event like this:
+Give an example ([see online](http://jsfiddle.net/tannhu/AzCdA/2/)), we have a Timer component listens to 'time:show' event like this:
 
 ``` js
 Class(Kanji, {
