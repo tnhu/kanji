@@ -257,7 +257,7 @@ Class(Kanji, {
 
 Play with a sample [online](http://jsfiddle.net/tannhu/YFCVX/2/).
 
-Note that listeners in Kanji are inheritable. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.
+Listeners in Kanji are inherited. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.
 
 #### Namespace and listeners
 
