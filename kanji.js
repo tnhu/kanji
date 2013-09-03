@@ -34,7 +34,7 @@ Class(function() {
       ERROR                = '[ERROR] ' + KANJI,
 
       // garbage collection settings
-      GC_TIMEOUT           = 3000,                                    // checking routine (ms)
+      GC_TIMEOUT           = 1500,                                    // checking routine (ms)
       GC_MAX_WORKING_TIME  =  250,                                    // duration GC is allowed work (ms), more than that, terminate itself
 
       // shortcuts
@@ -265,7 +265,7 @@ Class(function() {
     var meta         = elementMetadataOrNil($container),
         instanceRefs = repository.instanceRefs,
         componentId, instanceId, config, Component,
-        type, sharedInstanceInfo, instance, namespace, eventId, listeners, nsListeners;
+        type, sharedInstanceInfo, instance, namespace, eventId, listeners, instanceListeners;
 
     if (meta) {
       componentId  = meta.componentId;              // get component identifier
@@ -292,22 +292,21 @@ Class(function() {
           namespace                = meta.namespace;
           instance.namespace       = namespace;
 
-          // transform instance.listeners if namespace is declared
-          // instance.listeners[eventId] -> instance.listeners[eventId + '/' + namespace]
+          // update instance.listeners if namespace is declared
+          // instance.listeners[eventId] = instance.listeners[eventId + '/' + namespace]
           if (namespace) {
-            listeners   = instance.listeners;
-            nsListeners = {};
+            listeners         = instance.listeners;
+            instanceListeners = {};
 
             for (eventId in listeners) {
-              nsListeners[eventId + '/' + namespace] = listeners[eventId];
+              instanceListeners[eventId + '/' + namespace] = instanceListeners[eventId] = listeners[eventId];
             }
-            instance.listeners = nsListeners;
+            instance.listeners = instanceListeners;
           }
           break;
         }
 
         // init is called every time, no matter what type is
-        // TODO document about this init() behavior on DOM detach / attach
         instance.init($container, config);
 
         // mark the component is already initialized
@@ -369,7 +368,7 @@ Class(function() {
             eventId       = args.shift(),
             instanceRefs  = repository.instanceRefs,
             instanceId, instance, listeners, event;
-
+console.log('notify: ', eventId);
         // translate eventId to support namespace (for non-shared components only)
         eventId = (this.type === 'shared') ? eventId : (this.namespace ? [ eventId, '/', this.namespace ].join('') : eventId);
 
@@ -378,6 +377,7 @@ Class(function() {
           listeners = instance.listeners;
 
           if (listeners[eventId]) {
+console.log('notify apply: ', eventId);
             listeners[eventId].apply(instance, args);
           }
         }
