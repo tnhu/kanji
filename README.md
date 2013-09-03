@@ -255,7 +255,7 @@ Class(Kanji, {
 });
 ```
 
-Play with a sample online [here](http://jsfiddle.net/tannhu/YFCVX/2/).
+Play with a sample [online](http://jsfiddle.net/tannhu/YFCVX/2/).
 
 Note that listeners in Kanji are inheritable. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.
 
@@ -263,7 +263,7 @@ Note that listeners in Kanji are inheritable. If a parent component has some lis
 
 Instances of non-shared components are free to communicate privately via namespacing mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
 
-Give an example ([play sample online](http://jsfiddle.net/tannhu/AzCdA/1/)), we have a Timer component listens to 'time:show' event like this:
+Give an example ([online](http://jsfiddle.net/tannhu/AzCdA/1/)), we have a Timer component listens to 'time:show' event like this:
 
 ``` js
 Class(Kanji, {
