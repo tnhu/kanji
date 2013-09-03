@@ -382,7 +382,9 @@ LoginDialog = Class(Component, {
 In its implementation, Kanji delegates these events to document:
 
 ``` js
-blur change contextmenu dblclick error focus focusin focusout keydown keypress keyup load mousedown mouseup resize scroll select submit touchcancel touchleave touchmove touchstart unload
+blur change contextmenu dblclick error focus focusin focusout keydown
+keypress keyup load mousedown mouseup resize scroll select submit
+touchcancel touchleave touchmove touchstart unload
 ```
 
 Components have delegable actions only are able to detach and attach their DOM fragments as will. Kanji makes sure event handlers are bound properly.
@@ -402,7 +404,7 @@ Kanji notifies 'com:not-found' when it tries to initialize a component but its i
 **Syntax:**
 
 ``` js
-Kanji.notify('com:init', container); // container is jQuery object represents the component DOM fragment
+Kanji.notify('com:init', container); // jQuery object represents the component DOM fragment
 ```
 
 What is the use of 'com:init' notification? It's useful when you detach HTML fragment of a component which has actions bound to non-delegable events (like mouseenter, mouseout, mousemove, mouseleave, mouseover, hover) then later on attach the fragment. In such situation, you need to tell Kanji to re-initialize the component again.
