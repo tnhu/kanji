@@ -296,7 +296,7 @@ The call from a component:
 this.notify('time:show');
 ```
 
-notifies Timer1, Timer2, and Timer3, but not Red Timer. The call:
+notifies Timer1, Timer2, and Timer3, and Red Timer. The call:
 
 ``` js
 this.notify('time:show/red');
@@ -318,7 +318,7 @@ Class(Kanji, {
     },
 
     /**
-     * Listen to 'time:up' event on other timers
+     * Listen to 'time:up' event on all timers (Red timer included)
      */
     'time:up': function() {
     }
@@ -375,13 +375,39 @@ LoginDialog = Class(Component, {
 });
 ```
 
-#### Delegable and indelegable events
+#### Delegable and non-delegable events
 
-TBW
+In its implementation, Kanji delegates these events to document:
+
+``` js
+blur change contextmenu dblclick error focus focusin focusout keydown keypress keyup load mousedown mouseup resize scroll select submit touchcancel touchleave touchmove touchstart unload
+```
+
+Components have delegable actions only are able to detach and attach their DOM fragments as will. Kanji makes sure event handlers are bound properly.
+
+These below events are costly to delegate to document (Kanji's term: non-delegable events):
+
+``` js
+mouseenter mouseout mousemove mouseleave mouseover hover
+```
+
+Kanji binds non-delegable events to target elements directly. This approach helps to boost performance but results a downside: When a component which has non-delegable actions is detached from the page, all bound handlers are lost. When it's attached to the page again, it's developers' duty to tell Kanji to re-initialize the component by sending a 'com:init' notification manually.
+
+#### Kanji internal notifications
+
+Kanji notifies 'com:not-found' when it tries to initialize a component but its implementation is not found. You are able to force Kanji to initialize a component by sending a 'com:init' notification.
+
+**Syntax:**
+
+``` js
+Kanji.notify('com:init', container); // container is jQuery object represents the component DOM fragment
+```
+
+What is the use of 'com:init' notification? It's useful when you detach HTML fragment of a component which has actions bound to non-delegable events (like mouseenter, mouseout, mousemove, mouseleave, mouseover, hover) then later on attach the fragment. In such situation, you need to tell Kanji to re-initialize the component again.
 
 ### More about instantiation
 
-By default, Kanji does not do anything until there's a user interaction happens inside the component's HTML fragment. If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that fragment's scope. Imaging you have 100 declarations of a component named "Card":
+By default, Kanji does not do anything until there's a user interaction happens inside the component's HTML fragment (except components with data-lazy="false" in which forces Kanji to scan and bind non-delegable events if any). If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that fragment's scope. Imaging you have 100 declarations of a component named "Card":
 
 ``` html
 <div data-com="Card">
