@@ -3,7 +3,7 @@ Kanji 感じ
 
 [![Build Status](https://travis-ci.org/tnhu/kanji.png?branch=master)](https://travis-ci.org/tnhu/kanji)
 
-Kanji is a web declarative component framework. The idea behind Kanji is when you develop a web component, HTML and CSS should come first, then JavaScript only gets involved when user interactions happen. Kanji defines a tiny set of HTML data attributes and simple JavaScript APIs to build elegant, standardized, extensible, and testable web components.
+Kanji is a web declarative component framework. The idea behind Kanji is when you develop a web component, HTML and CSS should come first, then JavaScript only gets involved when user interactions happen. Kanji defines a small set of custom HTML data attributes and simple JavaScript APIs to build elegant, standardized, extensible, and testable web components.
 
 Design philosophy:
 
@@ -95,7 +95,7 @@ Import the script in the same page with the HTML fragment. When you start intera
 
 ### Declarative HTML data attributes
 
-Kanji defines four HTML data attributes to declare component, configuration, action and component instantiation strategy.
+Kanji defines small set of custom HTML data attributes to declare component, configuration, action and component instantiation strategy.
 
 | Name                                | Required  | Availability  | Default value   |
 | ----------------------------------- | --------- | ------------- | --------------- |
@@ -255,11 +255,78 @@ Class(Kanji, {
 });
 ```
 
+Play with a sample online [here](http://jsfiddle.net/tannhu/YFCVX/2/).
+
 Note that listeners in Kanji are inheritable. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.
 
 #### Namespacing and listeners
 
-TBW
+Instances of non-shared components are free to communicate privately via namespacing mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
+
+Give an example ([play sample online](http://jsfiddle.net/tannhu/AzCdA/1/)), we have a Timer component listens to 'time:show' event like this:
+
+``` js
+Class(Kanji, {
+  id: 'Timer',
+
+  init: function() {
+    this.notify('time:up');
+  },
+
+  listeners: {
+    'time:show': function() {
+      // ...
+    }
+  }
+});
+```
+
+When having declarations:
+
+``` html
+<script type="text/kanji" data-com="Timer/red" data-cfg="{ 'src': 'Red Timer' }" data-lazy="false"></script>
+<script type="text/kanji" data-com="Timer" data-cfg="{ 'src': 'Timer1' }" data-lazy="false"></script>
+<script type="text/kanji" data-com="Timer" data-cfg="{ 'src': 'Timer2' }" data-lazy="false"></script>
+<script type="text/kanji" data-com="Timer" data-cfg="{ 'src': 'Timer3' }" data-lazy="false"></script>
+```
+
+The call:
+
+``` js
+Kanji.notify('time:show');
+```
+
+will notify Timer1, Timer2, and Timer3, but not Red Timer. The call:
+
+``` js
+Kanji.notify('time:show/red');
+```
+
+will notify Red Timer. But not Timer1, Timer2, and Timer3.
+
+Listeners also support namespacing.
+
+``` js
+Class(Kanji, {
+  id: 'Listener',
+
+  listeners: {
+    /**
+     * Listen to 'time:up' event on Timer with namespace 'red'
+     */
+    'time:up/red': function() {
+    },
+
+    /**
+     * Listen to 'time:up' event on other timers
+     */
+    'time:up': function() {
+    }
+  }
+});
+```
+
+Kanji implements simple namespacing notify/listeners routing. In the example above, if you also namespace Listener component, then it won't work as expected. So please keep your code simple!
 
 #### Shared instance
 

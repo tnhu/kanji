@@ -13,8 +13,9 @@ Class(Kanji, {
   },
 
   /*
-   * when data-ns is declared in a component, sender must specify namespace with event id to route to the correct destination.
-   * For example Kanji.notify('time:show') notifies all Timer without namespace, Kanji.notify('time:show/red') notify Red Timer
+   * when namespace is declared in a component (aka data-com="ComponentId/namespace'), sender must specify
+   * namespace with event id to route to the correct destination.
+   * For example Kanji.notify('time:show') notifies all Timer without namespace, Kanji.notify('time:show/red') notifies Red Timer
    */
   listeners: {
     'time:show': function() {

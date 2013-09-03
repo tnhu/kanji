@@ -212,17 +212,22 @@ Class(function() {
    */
   function elementMetadataOrNil($element) {
     var result = 0,
-        componentId, action, $actions, len, children;
+        componentId, action, $actions, len, children, rawId, split, namespace;
 
     if ( !$element || !$element.length) {
       return result;
     }
 
-    componentId = $element.attr(DATA_COMPONENT);
-    if (componentId) {
+    rawId = $element.attr(DATA_COMPONENT);
+    if (rawId) {
+      split       = rawId.split('/');
+      componentId = split.shift();
+      namespace   = split.length ? split.join('') : null;
+
       result = {
         element    : $element,
         componentId: componentId,
+        namespace  : namespace,
         config     : configAsObjectOrRaw($element.attr(DATA_CONFIG)),
         actions    : parseAction($element.attr(DATA_ACTION))           // actions on component level, i.e data-com="Stylist" data-act="mouseenter:preloading"
       };
@@ -284,7 +289,7 @@ Class(function() {
           instanceId = instanceId || autoId++;                       // if instanceId exists, use it, otherwise, generate a new instanceId
           instance   = instanceRefs[instanceId] || new Component();  // if instance exists in instanceRefs, reuse it (in case of detach/attach), otherwise, create a new one
           instanceRefs[instanceId] = instance;                       // update instanceRefs
-          namespace                = $container.attr(DATA_NS);
+          namespace                = meta.namespace;
           instance.namespace       = namespace;
 
           // transform instance.listeners if namespace is declared
@@ -409,7 +414,7 @@ Class(function() {
         if (componentId) {
           if ( !repository[componentId]) {
             repository[componentId] = clazz;
-            componentSelector       = [ '[data-com="', componentId, '"][data-lazy="false"]' ].join('');
+            componentSelector       = [ '[data-com="', componentId, '"][data-lazy="false"],[data-com^="', componentId, '/"][data-lazy="false"]' ].join(''); // TODO benchmark this selector
 
             // merge listeners: no multiple inheritance support, just single parent
             superp = clazz.$superp;

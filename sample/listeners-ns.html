@@ -5,18 +5,21 @@
   <title>Kanji listeners with namespace sample</title>
 </head>
 <body>
-  <!-- Three Timer components with namespace red, blue, and green accordingly -->
-  <script type="text/kanji" data-com="Timer" data-ns="red" data-cfg="{ 'src': 'Red Sender' }" data-lazy="false"></script>
-  <script type="text/kanji" data-com="Timer" data-ns="blue" data-cfg="{ 'src': 'Blue Sender' }" data-lazy="false"></script>
-  <script type="text/kanji" data-com="Timer" data-ns="green" data-cfg="{ 'src': 'Green Sender' }" data-lazy="false"></script>
+  <!-- Two red namespace Timer components -->
+  <script data-com="Timer/red" data-cfg="{ 'src': 'Red Sender 1' }" data-lazy="false"></script>
+  <script data-com="Timer/red" data-cfg="{ 'src': 'Red Sender 2' }" data-lazy="false"></script>
+
+  <!-- Blue and green namespace Timer components -->
+  <script data-com="Timer/blue" data-cfg="{ 'src': 'Blue Sender' }" data-lazy="false"></script>
+  <script data-com="Timer/green" data-cfg="{ 'src': 'Green Sender' }" data-lazy="false"></script>
 
   <!-- Other Timer components without namespace -->
-  <script type="text/kanji" data-com="Timer" data-cfg="{ 'src': 'Sender1' }" data-lazy="false"></script>
-  <script type="text/kanji" data-com="Timer" data-cfg="{ 'src': 'Sender2' }" data-lazy="false"></script>
-  <script type="text/kanji" data-com="Timer" data-cfg="{ 'src': 'Sender3' }" data-lazy="false"></script>
+  <script data-com="Timer" data-cfg="{ 'src': 'Sender1' }" data-lazy="false"></script>
+  <script data-com="Timer" data-cfg="{ 'src': 'Sender2' }" data-lazy="false"></script>
+  <script data-com="Timer" data-cfg="{ 'src': 'Sender3' }" data-lazy="false"></script>
 
   <!-- Listener listens to all kinds of timer events -->
-  <script type="text/kanji" data-com="Listener" data-lazy="false"></script>
+  <script data-com="Listener" data-lazy="false"></script>
 
   <script src="https://dl.dropboxusercontent.com/u/7677927/ui-testings/js/jquery.js"></script>
   <script src="../lib/jsface.js"></script>
