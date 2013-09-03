@@ -12,7 +12,7 @@ Design philosophy:
 3. Event bindings among DOM elements and JavaScript handlers should not be verbose and painful.
 4. A component should be an isolated piece of software. Components interact with other components by events, not APIs.
 
-Kanji is small. When being minimized and gziped, standalone version is about 1.5K, full version including dependencies (without jQuery) is less than 2.5K.
+Kanji is small. When being minimized and gziped, standalone version is about 1.7K, full version including dependencies (without jQuery) is less than 2.6K.
 
 ## Setup
 
