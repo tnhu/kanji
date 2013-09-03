@@ -259,11 +259,11 @@ Play with a sample [online](http://jsfiddle.net/tannhu/YFCVX/2/).
 
 Note that listeners in Kanji are inheritable. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.
 
-#### Namespacing and listeners
+#### Namespace and listeners
 
-Instances of non-shared components are free to communicate privately via namespacing mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
+Instances of non-shared components are able to communicate privately via namespace mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
 
-Give an example ([online](http://jsfiddle.net/tannhu/AzCdA/1/)), we have a Timer component listens to 'time:show' event like this:
+Give an example ([see online](http://jsfiddle.net/tannhu/AzCdA/1/)), we have a Timer component listens to 'time:show' event like this:
 
 ``` js
 Class(Kanji, {
@@ -290,21 +290,21 @@ When having declarations:
 <script data-com="Timer" data-cfg="{ 'src': 'Timer3' }" data-lazy="false"></script>
 ```
 
-The call:
+The call from a component:
 
 ``` js
-Kanji.notify('time:show');
+this.notify('time:show');
 ```
 
-will notify Timer1, Timer2, and Timer3, but not Red Timer. The call:
+notifies Timer1, Timer2, and Timer3, but not Red Timer. The call:
 
 ``` js
-Kanji.notify('time:show/red');
+this.notify('time:show/red');
 ```
 
-will notify Red Timer. But not Timer1, Timer2, and Timer3.
+notifies Red Timer. But not Timer1, Timer2, and Timer3.
 
-Listeners also support namespacing.
+Listeners also support namespace.
 
 ``` js
 Class(Kanji, {
@@ -326,7 +326,7 @@ Class(Kanji, {
 });
 ```
 
-Kanji implements simple namespacing notify/listeners routing. In the example above, if you also namespace Listener component, then it won't work as expected. So please keep your code simple!
+Kanji implements simple namespace notify/listeners routing. In the example above, if you also namespace Listener component, then it won't work as expected. So please keep your code simple!
 
 #### Shared instance
 
