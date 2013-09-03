@@ -368,7 +368,7 @@ Class(function() {
             eventId       = args.shift(),
             instanceRefs  = repository.instanceRefs,
             instanceId, instance, listeners, event;
-console.log('notify: ', eventId);
+
         // translate eventId to support namespace (for non-shared components only)
         eventId = (this.type === 'shared') ? eventId : (this.namespace ? [ eventId, '/', this.namespace ].join('') : eventId);
 
@@ -377,7 +377,6 @@ console.log('notify: ', eventId);
           listeners = instance.listeners;
 
           if (listeners[eventId]) {
-console.log('notify apply: ', eventId);
             listeners[eventId].apply(instance, args);
           }
         }
