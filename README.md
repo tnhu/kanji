@@ -284,10 +284,10 @@ Class(Kanji, {
 When having declarations:
 
 ``` html
-<script type="text/kanji" data-com="Timer/red" data-cfg="{ 'src': 'Red Timer' }" data-lazy="false"></script>
-<script type="text/kanji" data-com="Timer" data-cfg="{ 'src': 'Timer1' }" data-lazy="false"></script>
-<script type="text/kanji" data-com="Timer" data-cfg="{ 'src': 'Timer2' }" data-lazy="false"></script>
-<script type="text/kanji" data-com="Timer" data-cfg="{ 'src': 'Timer3' }" data-lazy="false"></script>
+<script data-com="Timer/red" data-cfg="{ 'src': 'Red Timer' }" data-lazy="false"></script>
+<script data-com="Timer" data-cfg="{ 'src': 'Timer1' }" data-lazy="false"></script>
+<script data-com="Timer" data-cfg="{ 'src': 'Timer2' }" data-lazy="false"></script>
+<script data-com="Timer" data-cfg="{ 'src': 'Timer3' }" data-lazy="false"></script>
 ```
 
 The call:
