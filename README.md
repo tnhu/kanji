@@ -318,7 +318,7 @@ Class(Kanji, {
     },
 
     /**
-     * Listen to 'time:up' event on all timers (Red timer included)
+     * Listen to 'time:up' event on other timers (Red timer excluded 'cause it's declared with namespace)
      */
     'time:up': function() {
     }
@@ -326,7 +326,9 @@ Class(Kanji, {
 });
 ```
 
-Kanji implements simple namespace notify/listeners routing. In the example above, if you also namespace Listener component, then it won't work as expected. So please keep your code simple!
+When a component is namespaced, its notifications are scoped in its namespace. In the example above, you see Red Timer is namespaced as 'red' hence in order to capture Red Timer 'time:up' event, Listener declares 'time:up/red'.
+
+Kanji implements simple namespace notify/listeners routing. In the example above, if Listener component is also namespaced, then it won't work as expected. So please keep your code simple!
 
 #### Shared instance
 
