@@ -17,17 +17,22 @@ Class(function() {
       DATA_NS              = 'data-ns',                               // namespace attribute
       DATA_CONFIG          = 'data-cfg',
       DATA_INSTANCE_ID     = 'data-instance',                         // component instance id (value is auto generated)
-      DATA_ACTION          = 'data-act',
+      DATA_ACT             = 'data-act',
+      DATA_LAZY            = 'data-lazy',
 
       // selectors
       SELECTOR_COMPONENT   = '[data-com]',                            // component selector
-      SELECTOR_ACTION      = '[data-act]',                            // action selector
+      SELECTOR_ACT         = '[data-act]',                            // action selector
 
-      // delegable events (from document), except click and touchend (unperformant events should be moved to INDELEGABLE_EVENTS)
+      // delegable events (from document), except click and touchend (unperformant events should be moved to NONDELEGABLE_EVENTS)
       DELEGABLE_EVENTS     = 'blur change contextmenu dblclick error focus focusin focusout keydown keypress keyup load mousedown mouseup resize scroll select submit touchcancel touchleave touchmove touchstart unload',
 
       // indelegable events (delegable but unperformant)
-      INDELEGABLE_EVENTS   = { mouseenter:1, mouseout:1, mousemove:1, mouseleave:1, mouseover:1, hover:1 },
+      NONDELEGABLE_EVENTS  = { mouseenter:1, mouseout:1, mousemove:1, mouseleave:1, mouseover:1, hover:1 },
+
+      NONDELEGABLE_REGREX  = /\b(mouseenter|mouseout|mousemove|mouseleave|mouseover|hover)\b/,
+
+      FALSE                = 'false',
 
       // message prefix
       KANJI                = 'Kanji:',
@@ -178,17 +183,17 @@ Class(function() {
    * if being delegated. Events like mouseenter, mouseout are very costly if being delegated to document level.
    * @param meta component metadata
    */
-  function indelegableEventsBinding(meta) {
+  function nonDelegableEventsBinding(meta) {
     var event, index;
 
     for (event in meta.actions) {                             // loop through actions
-      if (INDELEGABLE_EVENTS[event]) {                        // if event is on the list then bind it
+      if (NONDELEGABLE_EVENTS[event]) {                        // if event is on the list then bind it
         meta.element.on(event, invokeActionHandlerFromEvent);
       }
     }
 
     for (index in meta.children) {
-      indelegableEventsBinding(meta.children[index]);
+      nonDelegableEventsBinding(meta.children[index]);
     }
   }
 
@@ -229,7 +234,7 @@ Class(function() {
         componentId: componentId,
         namespace  : namespace,
         config     : configAsObjectOrRaw($element.attr(DATA_CONFIG)),
-        actions    : parseAction($element.attr(DATA_ACTION))           // actions on component level, i.e data-com="Stylist" data-act="mouseenter:preloading"
+        actions    : parseAction($element.attr(DATA_ACT))           // actions on component level, i.e data-com="Stylist" data-act="mouseenter:preloading"
       };
 
       // get metadata of direct actions
@@ -244,7 +249,7 @@ Class(function() {
         result.children = children;
       }
     } else {
-      action = $element.attr(DATA_ACTION);
+      action = $element.attr(DATA_ACT);
       if (action) {
         result = {
           element: $element,
@@ -313,7 +318,7 @@ Class(function() {
         $container.attr(DATA_INSTANCE_ID, instanceId);
 
         // bind self binding events (events which can't not be delegated as could not be performant)
-        indelegableEventsBinding(meta);
+        nonDelegableEventsBinding(meta);
       } else {
         console.log(ERROR, 'Component not found', componentId);
 
@@ -323,6 +328,28 @@ Class(function() {
     }
 
     return instanceRefs[instanceId];
+  }
+
+  /**
+   * Check if a non-lazy component has some non-delegable actions in it. If it does then
+   * initialize it automatically (without the need of specifying lazy="false").
+   * @param $container container
+   */
+  function checkToInitNonLazyComponentFromContainer($container) {
+    var act       = $container.attr(DATA_ACT),
+        actions   = act ? [ act ] : [],
+        $children = $container.find(SELECTOR_ACT),
+        len       = $children.length;
+
+    while (len--) {
+      actions.push($children[len].getAttribute(DATA_ACT));
+    }
+
+    actions = actions.join(' ');
+
+    if (NONDELEGABLE_REGREX.test(actions)) {
+      initComponentFromContainer($container);
+    }
   }
 
   /**
@@ -413,7 +440,7 @@ Class(function() {
         if (componentId) {
           if ( !repository[componentId]) {
             repository[componentId] = clazz;
-            componentSelector       = [ '[data-com="', componentId, '"][data-lazy="false"],[data-com^="', componentId, '/"][data-lazy="false"]' ].join(''); // TODO benchmark this selector
+            componentSelector       = [ '[data-com="', componentId, '"],[data-com^="', componentId, '/"]' ].join(''); // TODO benchmark this selector
 
             // merge listeners: no multiple inheritance support, just single parent
             superp = clazz.$superp;
@@ -440,7 +467,13 @@ Class(function() {
             // otherwise, put component selector in queue for later initialization
             if (isDomReady) {
               $(componentSelector).each(function() {
-                initComponentFromContainer($(this));
+                var th = $(this);
+
+                if (th.attr(DATA_LAZY) === FALSE) {
+                  initComponentFromContainer(th);
+                } else {
+                  checkToInitNonLazyComponentFromContainer(th);
+                }
               });
             } else {
               lazySelectorQueue.push(componentSelector);
@@ -477,7 +510,7 @@ Class(function() {
         var $document  = $(document),
             len        = lazySelectorQueue.length,   // lazySelectorQueue stores selectors to data-lazy="false" element and not initialized yet
             queueIndex = 0,
-            $container, count, containerIndex;
+            $container, count, containerIndex, $con;
 
         // Mark flag that DOM is ready. $ready may be executed after DOM ready, this flag
         // ensures $ready knows how to initialize none-lazy components
@@ -491,7 +524,13 @@ Class(function() {
 
           if (count) {
             while (containerIndex < count) {
-              initComponentFromContainer($($container[containerIndex++]));
+              $con = $($container[containerIndex++]);
+
+              if ($con.attr(DATA_LAZY) === FALSE) {
+              initComponentFromContainer($con);
+              } else {
+                checkToInitNonLazyComponentFromContainer($con);
+              }
             }
           }
         }
@@ -501,10 +540,10 @@ Class(function() {
         // $(':not([data-instance])[data-com][data-lazy]');
 
         // Delegate default event type (click or touchend) on [data-act] elements to document
-        $document.on(TOUCH_END, SELECTOR_ACTION, function(event) {
+        $document.on(TOUCH_END, SELECTOR_ACT, function(event) {
           actionFlag = true;                                          // prevent 'click' handler from executing
           return invokeActionHandlerFromEvent(event, CLICK);
-        }).on(CLICK, SELECTOR_ACTION, function(event) {
+        }).on(CLICK, SELECTOR_ACT, function(event) {
           if ( !actionFlag) {                                         // only execute handler if 'touchend' handler was not executed
             return invokeActionHandlerFromEvent(event, CLICK);
           }
