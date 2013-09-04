@@ -44,7 +44,7 @@ Assume you have an HTML fragment like below for a login form with two input fiel
 </form>
 ```
 
-You declare the fragment as a Kanji component by adding extra information into it via data attributes (data-*).
+You declare the fragment as a Kanji component by adding extra information into it via data attributes (`data-*`).
 
 ``` html
 <form data-com="LoginForm" data-cfg="{ 'debug': true }">
@@ -54,7 +54,7 @@ You declare the fragment as a Kanji component by adding extra information into i
 </form>
 ```
 
-What happens here is you declare the form as a component named `"LoginForm"` with three actions `checkUsername`, `checkPassword` and `login`. `checkUsername` is bound to `keydown` event on the username field, `checkPassword` handles `keydown` event on password field and `login` handles `click` event on the submit button (click event is default event so you don't have to specify `click:login`).
+What happens here is you declare the form as a component named `LoginForm` with three actions `checkUsername`, `checkPassword` and `login`. `checkUsername` is bound to `keydown` event on the username field, `checkPassword` handles `keydown` event on password field and `login` handles `click` event on the submit button (click event is default event so you don't have to specify `click:login`).
 
 Next you implement LoginForm (assume you have it as `LoginForm.js`):
 
@@ -249,7 +249,7 @@ Class(Kanji, {
 });
 ```
 
-Any components want to capture a notification need to implement a listener. For example, Logger listens to `"log.info"` to do some logging:
+Any components want to capture a notification need to implement a listener. For example, Logger listens to `log.info` to do some logging:
 
 ``` js
 Class(Kanji, {
@@ -420,11 +420,11 @@ You are able to force Kanji to initialize a component by sending a `'com:init'` 
 Kanji.notify('com:init', container); // jQuery object represents the component DOM fragment
 ```
 
-What is the use of `'com:init'` notification? It's useful when you detach HTML fragment of a component which has actions bound to non-delegable events (like mouseenter, mouseout, mousemove, mouseleave, mouseover, hover) then later on attach the fragment. In such situation, you need to tell Kanji to re-initialize the component again.
+What is the use of `'com:init'` notification? It's useful when you detach HTML fragment of a component which has actions bound to non-delegable events (`mouseenter`, `mouseout`, `mousemove`, `mouseleave`, `mouseover`, `hover`) then later on attach the fragment. In such situation, you need to tell Kanji to re-initialize the component again.
 
 ### More about instantiation
 
-By default, Kanji does not do anything until there's a user interaction happens inside the component's HTML fragment (except components with `data-lazy="false"` in which forces Kanji to scan and bind non-delegable events if any). If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that fragment's scope. Imaging you have 100 declarations of a component named `"Card"`:
+By default, Kanji does not do anything until there's a user interaction happens inside the component's HTML fragment (except components with `data-lazy="false"` in which forces Kanji to scan and bind non-delegable events if any). If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that fragment's scope. Imaging you have 100 declarations of a component named `Card`:
 
 ``` html
 <div data-com="Card">
@@ -444,9 +444,9 @@ By default, Kanji does not do anything until there's a user interaction happens 
 </div>
 ```
 
-When you click button `"Say hi"` on the first card (or any card), first instance of Card is instantiated. When you click `"Say hi"` on the second card, another instance is instantiated.
+When you click button `Say hi` on the first card (or any card), first instance of Card is instantiated. When you click `Say hi` on the second card, another instance is instantiated.
 
-What happens if you specify `type="shared"` in Card? When you first click `"Say hi"` on any card, one instance of Card is instantiated and this instance will be shared across all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
+What happens if you specify `type="shared"` in Card? When you first click `Say hi` on any card, one instance of Card is instantiated and this instance will be shared across all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
 
 Kanji has a garbage collector. When all the DOM fragments represent a component are detached, all of its instances will be removed. In the other word, components can be attached and detached as will.
 
