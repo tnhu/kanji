@@ -54,9 +54,9 @@ You declare the fragment as a Kanji component by adding extra information into i
 </form>
 ```
 
-What happens here is you declare the form as a component named "LoginForm" with three actions *checkUsername*, *checkPassword* and *login*. *checkUsername* is bound to *keydown* event on the username field, *checkPassword* handles *keydown* event on password field and *login* handles *click* event on the submit button (click event is default event so you don't have to specify *click:login*).
+What happens here is you declare the form as a component named `"LoginForm"` with three actions `checkUsername`, `checkPassword` and `login`. `checkUsername` is bound to `keydown` event on the username field, `checkPassword` handles `keydown` event on password field and `login` handles `click` event on the submit button (click event is default event so you don't have to specify `click:login`).
 
-Next you implement LoginForm (assume you have it as LoginForm.js):
+Next you implement LoginForm (assume you have it as `LoginForm.js`):
 
 ``` js
 Class(Kanji, {          // a component is a sub-class of Kanji
@@ -106,7 +106,7 @@ Kanji defines small set of custom HTML data attributes to declare component, con
 
 #### data-com
 
-Add data-com="YourComponentId" into any HTML elements to declare it's a component. For example:
+Add `data-com="YourComponentId"` into any HTML elements to declare it's a component. For example:
 
 ``` html
 <div data-com="MyExampleComponent">
@@ -130,7 +130,7 @@ Note that components can be nested.
 
 #### data-lazy
 
-By default, all components are lazy instantiated. Meaning the JavaScript instance of the component will be created on demand, whenever an event happens inside it. If you want your component to be initialized when its DOM fragment is ready, add data-lazy="false".
+By default, all components are lazy instantiated. Meaning the JavaScript instance of the component will be created on demand, whenever an event happens inside it. If you want your component to be initialized when its DOM fragment is ready, add `data-lazy="false"`.
 
 ``` html
 <div data-com="MyExampleComponent" data-lazy="false">
@@ -139,7 +139,7 @@ By default, all components are lazy instantiated. Meaning the JavaScript instanc
 
 #### data-cfg
 
-This data attribute is used to pass an extra parameter/configuration into your component. Declare it under data-cfg="VALUE". VALUE can be anything.
+This data attribute is used to pass an extra parameter/configuration into your component. Declare it under `data-cfg="VALUE"`. VALUE can be anything.
 
 ``` html
 <div data-com="MyExampleComponent" data-cfg="{ 'foo': 'bar' }">
@@ -156,7 +156,7 @@ Declare action(s) on any element inside a component (including component's conta
 data-act="event1[,event2...]:handler|eventN:handlerN|..."
 ```
 
-If event is not specify but only handler (i.e: data-act="login") then handler will be bound to 'click' event or 'touchend' event (on mobile devices).
+If event is not specify but only handler (i.e: `data-act="login"`) then handler will be bound to `'click'` event or `'touchend'` event (on mobile devices).
 
 **Supported events:**
 
@@ -188,7 +188,7 @@ MyExampleComponent = Class(Kanji, {
 });
 ```
 
-If you want to handle something when component DOM is ready. Implement init() method:
+If you want to handle something when component DOM is ready. Implement `init()` method:
 
 ``` js
 MyExampleComponent = Class(Kanji, {
@@ -199,14 +199,14 @@ MyExampleComponent = Class(Kanji, {
 });
 ```
 
-* container: jQuery object represents the component element (HTML)
-* config: configuration declared in the component (if any)
+* `container`: jQuery object represents the component element (HTML)
+* `config`: configuration declared in the component (if any)
 
-Map your declared actions to your component's methods by implementing "on" + action methods. When an action occurs, there are three parameters will be passed to its handler:
+Map your declared actions to your component's methods by implementing `"on" + action methods`. When an action occurs, there are three parameters will be passed to its handler:
 
-* event: event object
-* target: jQuery object represents the target element
-* container: jQuery object represents the component element
+* `event`: event object
+* `target`: jQuery object represents the target element
+* `container`: jQuery object represents the component element
 
 ``` js
 MyExampleComponent = Class(Kanji, {
@@ -233,7 +233,7 @@ When implementing your components, note that Kanji reserves these properties for
 
 #### Inter-component communication
 
-A component uses notify() to send notifications.
+A component uses `notify()` to send notifications.
 
 ``` js
 Class(Kanji, {
@@ -249,7 +249,7 @@ Class(Kanji, {
 });
 ```
 
-Any components want to capture a notification need to implement a listener. For example, Logger listens to "log.info" to do some logging:
+Any components want to capture a notification need to implement a listener. For example, Logger listens to `"log.info"` to do some logging:
 
 ``` js
 Class(Kanji, {
@@ -271,7 +271,7 @@ Listeners in Kanji are inherited. If a parent component has some listeners, its 
 
 Instances of non-shared components are able to communicate privately via namespace mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
 
-Give an example ([see online](http://jsfiddle.net/tannhu/AzCdA/2/)), we have a Timer component listens to 'time:show' event like this:
+Give an example ([see online](http://jsfiddle.net/tannhu/AzCdA/2/)), we have a Timer component listens to `'time:show'` event like this:
 
 ``` js
 Class(Kanji, {
@@ -334,13 +334,13 @@ Class(Kanji, {
 });
 ```
 
-When a component is namespaced, its notifications are scoped in its namespace. In the example above, you see Red Timer is namespaced as 'red' hence in order to capture Red Timer 'time:up' event, Listener declares 'time:up/red'.
+When a component is namespaced, its notifications are scoped in its namespace. In the example above, you see Red Timer is namespaced as 'red' hence in order to capture Red Timer '`time:up'` event, Listener declares `'time:up/red'`.
 
 Kanji implements simple namespace notify/listeners routing. In the example above, if Listener component is also namespaced, then it won't work as expected. So please keep your code simple!
 
 #### Shared instance
 
-By default, an instance of the component class is instantiated per each declared DOM fragment. Kanji supports shared instance where only one instance of the component is instantiated for all declared fragments. Enabling shared instance by adding type="shared" when implementing your component.
+By default, an instance of the component class is instantiated per each declared DOM fragment. Kanji supports shared instance where only one instance of the component is instantiated for all declared fragments. Enabling shared instance by adding `type="shared"` when implementing your component.
 
 ``` js
 MyExampleComponent = Class(Kanji, {
@@ -403,13 +403,16 @@ These below events are costly to delegate to document (Kanji's term: non-delegab
 mouseenter mouseout mousemove mouseleave mouseover hover
 ```
 
-Kanji binds non-delegable events to target elements directly. This approach helps to boost performance but results a downside: When a component which has non-delegable actions is detached from the page, all bound handlers are lost. When it's attached to the page again, it's developers' duty to tell Kanji to re-initialize the component by sending a 'com:init' notification manually.
+Kanji binds non-delegable events to target elements directly. This approach helps to boost performance but results a downside: When a component which has non-delegable actions is detached from the page, all bound handlers are lost. When it's attached to the page again, it's developers' duty to tell Kanji to re-initialize the component by sending a `'com:init'`
+notification manually.
+
+A component has non-delegable events must specify `lazy="false"` in order to get its actions bound correctly.
 
 #### Kanji internal notifications
 
-Kanji notifies 'com:not-found' when it tries to initialize a component but its implementation is not found. Frameworks built on top of Kanji can capture this notification to do some handy stuff like fetching scripts or error reporting, etc.
+Kanji notifies `'com:not-found'` when it tries to initialize a component but its implementation is not found. Frameworks built on top of Kanji can capture this notification to do some handy stuff like fetching scripts or error reporting, etc.
 
-You are able to force Kanji to initialize a component by sending a 'com:init' notification.
+You are able to force Kanji to initialize a component by sending a `'com:init'` notification.
 
 **Syntax:**
 
@@ -417,11 +420,11 @@ You are able to force Kanji to initialize a component by sending a 'com:init' no
 Kanji.notify('com:init', container); // jQuery object represents the component DOM fragment
 ```
 
-What is the use of 'com:init' notification? It's useful when you detach HTML fragment of a component which has actions bound to non-delegable events (like mouseenter, mouseout, mousemove, mouseleave, mouseover, hover) then later on attach the fragment. In such situation, you need to tell Kanji to re-initialize the component again.
+What is the use of `'com:init'` notification? It's useful when you detach HTML fragment of a component which has actions bound to non-delegable events (like mouseenter, mouseout, mousemove, mouseleave, mouseover, hover) then later on attach the fragment. In such situation, you need to tell Kanji to re-initialize the component again.
 
 ### More about instantiation
 
-By default, Kanji does not do anything until there's a user interaction happens inside the component's HTML fragment (except components with data-lazy="false" in which forces Kanji to scan and bind non-delegable events if any). If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that fragment's scope. Imaging you have 100 declarations of a component named "Card":
+By default, Kanji does not do anything until there's a user interaction happens inside the component's HTML fragment (except components with `data-lazy="false"` in which forces Kanji to scan and bind non-delegable events if any). If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that fragment's scope. Imaging you have 100 declarations of a component named `"Card"`:
 
 ``` html
 <div data-com="Card">
@@ -441,9 +444,9 @@ By default, Kanji does not do anything until there's a user interaction happens 
 </div>
 ```
 
-When you click button "Say hi" on the first card (or any card), first instance of Card is instantiated. When you click "Say hi" on the second card, another instance is instantiated.
+When you click button `"Say hi"` on the first card (or any card), first instance of Card is instantiated. When you click `"Say hi"` on the second card, another instance is instantiated.
 
-What happens if you specify type="shared" in Card? When you first click "Say hi" on any card, one instance of Card is instantiated and this instance will be shared across all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
+What happens if you specify `type="shared"` in Card? When you first click `"Say hi"` on any card, one instance of Card is instantiated and this instance will be shared across all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
 
 Kanji has a garbage collector. When all the DOM fragments represent a component are detached, all of its instances will be removed. In the other word, components can be attached and detached as will.
 
