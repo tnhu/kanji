@@ -56,7 +56,7 @@ You declare the fragment as a Kanji component by adding extra information into i
 
 What happens here is you declare the form as a component named `LoginForm` with three actions `checkUsername`, `checkPassword` and `login`. `checkUsername` is bound to `keydown` event on the username field, `checkPassword` handles `keydown` event on password field and `login` handles `click` event on the submit button (click event is default event so you don't have to specify `click:login`).
 
-Next you implement LoginForm (assume you have it as `LoginForm.js`):
+Next you implement LoginForm:
 
 ``` js
 Class(Kanji, {          // a component is a sub-class of Kanji
