@@ -156,12 +156,20 @@ Declare action(s) on any element inside a component (including component's conta
 data-act="event1[,event2...]:handler|eventN:handlerN|..."
 ```
 
-If event is not specify but only handler (i.e: data-act="login") then handler will be bound to 'click' event or 'touchend' event (on mobile devices). event can be any [DOM events that jQuery supports](http://api.jquery.com/category/events/).
+If event is not specify but only handler (i.e: data-act="login") then handler will be bound to 'click' event or 'touchend' event (on mobile devices).
+
+**Supported events:**
+
+``` js
+blur change contextmenu dblclick error focus focusin focusout hover keydown keypress keyup load
+mousedown mouseenter mouseleave mousemove mouseout mouseover mouseup resize scroll select submit
+touchcancel touchleave touchmove touchstart unload
+```
 
 Sample of data-act declaration with multiple events and handlers.
 
 ``` html
-<div data-com="MyExampleComponent" data-act="mouseenter:preloadData">
+<div data-com="MyExampleComponent" data-act="mouseenter:preloadData" data-lazy="false">
   <input data-act="keydown,keyup:type|mouseenter:foo|mouseout:bar"></input>
   <button data-act="hi">Say hi</button>
   <a role="button" data-act="bye">Say bye</a>
@@ -382,9 +390,9 @@ LoginDialog = Class(Component, {
 In its implementation, Kanji delegates these events to document:
 
 ``` js
-blur change contextmenu dblclick error focus focusin focusout keydown
-keypress keyup load mousedown mouseup resize scroll select submit
-touchcancel touchleave touchmove touchstart unload
+blur change contextmenu dblclick error focus focusin focusout keydown keypress
+keyup load mousedown mouseup resize scroll select submit touchcancel touchleave
+touchmove touchstart unload
 ```
 
 Components have delegable actions only are able to detach and attach their DOM fragments as will. Kanji makes sure event handlers are bound properly.
@@ -399,7 +407,9 @@ Kanji binds non-delegable events to target elements directly. This approach help
 
 #### Kanji internal notifications
 
-Kanji notifies 'com:not-found' when it tries to initialize a component but its implementation is not found. You are able to force Kanji to initialize a component by sending a 'com:init' notification.
+Kanji notifies 'com:not-found' when it tries to initialize a component but its implementation is not found. Frameworks built on top of Kanji can capture this notification to do some handy stuff like fetching scripts or error reporting, etc.
+
+You are able to force Kanji to initialize a component by sending a 'com:init' notification.
 
 **Syntax:**
 
