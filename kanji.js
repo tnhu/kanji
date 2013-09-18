@@ -4,6 +4,8 @@
 /**
  * Kanji web declarative component framework.
  *
+ * Copyright (c) 2013 LinkedIn Corporation
+ *
  * @author Tan Nhu, http://lnkd.in/tnhu
  * @license MIT
  * @dependency jsface, jsface.ready, jQuery, JSON || jQuery.parseJSON

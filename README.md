@@ -259,7 +259,7 @@ Listeners in Kanji are inherited. If a parent component has some listeners, its 
 
 #### Namespace and listeners
 
-Instances of non-shared components are able to communicate intentionally via namespace mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
+Instances of non-shared components are able to communicate directly via namespace mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
 
 Give an example ([see online](http://jsfiddle.net/tannhu/AzCdA/3/)), we have a Timer component listens to `time:show` event like this:
 
