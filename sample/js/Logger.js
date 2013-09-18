@@ -1,8 +1,8 @@
 LI.Logger = Class(LI.Component, {
   id  : 'Logger',
   type: 'shared',
+  lazy: false,
 
-  /** @overide */
   init: function(container, config) {
     this.container = container;
   },

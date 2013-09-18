@@ -7,19 +7,19 @@
 </head>
 <body>
   <!-- Page component -->
-  <div class="page" data-com="Page" data-cfg="{ 'debug': true }" data-lazy="false">
+  <div class="page" data-com="Page" data-cfg="{ 'debug': true }">
     <!--
       Stylist component
       @see Stylist.js
     -->
-    <div class="view stylist active" data-com="Stylist" data-act="mouseenter:preloadStylist">
-      <button class="bt-feedback" data-act="feedback">Leave feedback</button>
-      <button class="bt-email"    data-act="email|mouseenter,mouseout:trackingEmail">Email</button>
-      <button class="bt-call"     data-act="call">Call</button>
-      <button class="bt-profile"  data-act="profile">Profile</button>
+    <div class="view stylist active" data-com="Stylist">
+      <button class="bt-feedback">Leave feedback</button>
+      <button class="bt-email">Email</button>
+      <button class="bt-call">Call</button>
+      <button class="bt-profile">Profile</button>
 
       <div class="view feedback" data-com="Feedback">
-        <input type="text" class="name" data-act="keydown,keyup:typing"></input>
+        <input type="text" class="name"></input>
         <p>Message:<textarea></textarea></p>
       </div>
     </div>
@@ -27,37 +27,36 @@
     <!--
       Blog component. It's ok that this component is not implemented
     -->
-    <div  class="view blog" data-com="Blog">
+    <div class="view blog" data-com="Blog">
     </div>
 
     <!--
-      Featured component. Kanji does not do anything with a data-lazy="false" component when its class is not available
+      Featured component. Kanji does not do anything with a component when its class is not available
     -->
-    <div  class="view featured" data-com="Featured" data-lazy="false">
+    <div class="view featured" data-com="Featured">
     </div>
 
     <!--
       Wardrope component. It's ok that this component is not implemented
     -->
-    <div  class="view wardrope" data-com="Wardrope">
-      <!-- Kanji notifies an error when interaction happens on this button -->
-      <button class="bt-request" data-act="click:requestAdvice">Request Outfitting Advice</button>
+    <div class="view wardrope" data-com="Wardrope">
+      <button class="bt-request">Request Outfitting Advice</button>
     </div>
 
     <!--
       Page's tab actions: same action implementation handles all
       @see Page.js
     -->
-    <button class="bt-stylist"  data-act="switchView" data-viewid="stylist">Go to Stylist</button>
-    <button class="bt-blog"     data-act="switchView" data-viewid="blog"></button>
-    <button class="bt-featured" data-act="switchView" data-viewid="featured"></button>
-    <button class="bt-wardrope" data-act="switchView" data-viewid="wardrope">Go to Wardrope</button>
+    <button class="bt-stylist"  data-viewid="stylist">Go to Stylist</button>
+    <button class="bt-blog"     data-viewid="blog"></button>
+    <button class="bt-featured" data-viewid="featured"></button>
+    <button class="bt-wardrope" data-viewid="wardrope">Go to Wardrope</button>
 
     <!--
       ResourceLoader is a non-ui component (there's no UI interaction)
       @see ResourceLoader.js
     -->
-    <script type="text/kanji" data-com="ResourceLoader" data-lazy="false" data-cfg="{
+    <script data-com="ResourceLoader" data-cfg="{
         'js' : [
           'js/Component.js',
           'js/Logger.js',
@@ -76,13 +75,13 @@
         ]
       }">
     </script>
-    <script type="text/kanji" data-com="Reporter" data-lazy="false"></script>
+    <script data-com="Reporter"></script>
 
     <!--
       Logger component demonstrates inter-communication between components via notify()
       @see Logger.js, Component.js#log
     -->
-    <div id="log" data-com="Logger" data-lazy="false">
+    <div id="log" data-com="Logger">
       <p class="title">Logs</p>
       <p>Try to click/touch around....</p>
     </div>

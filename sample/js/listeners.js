@@ -1,9 +1,12 @@
-Class(Kanji, {
+Timer = Class(Kanji, {
   id: 'Timer',
   type: 'shared',
+  lazy: false,
 
   init: function(container, config) {
     var th = this;
+
+    console.log('Timer initialization');
 
     setInterval(function() {
         th.notify('time:up', +new Date(), config.src);
@@ -11,9 +14,14 @@ Class(Kanji, {
   }
 });
 
-Class(Kanji, {
+Listener = Class(Kanji, {
   id: 'Listener',
   type: 'shared',
+  lazy: false,
+
+  init: function() {
+    console.log('Listener initialization');
+  },
 
   listeners: {
     'time:up': function(date, from) {

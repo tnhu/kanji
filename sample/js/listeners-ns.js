@@ -1,5 +1,6 @@
-Class(Kanji, {
+Timer = Class(Kanji, {
   id: 'Timer',
+  lazy: false,
 
   init: function(container, config) {
     var th = this;
@@ -19,9 +20,10 @@ Class(Kanji, {
   }
 });
 
-Class(Kanji, {
+Listener = Class(Kanji, {
   id: 'Listener',
   type: 'shared',
+  lazy: false,
 
   init: function() {
     this.$body = $(document.body);

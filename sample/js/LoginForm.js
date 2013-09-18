@@ -1,23 +1,26 @@
 Class(Kanji, {
-  id: "LoginForm",
+  id: 'LoginForm',
 
-  init: function(form, config) {
-    // do some initialization
-    // form is jQuery object represents <form/>
-    // config is the object passed from data-cfg
+  actions: {
+    '[name=username]': 'keydown:checkUsername',
+    '[name=password]': 'keydown:checkPassword',
+    '[type=submit]':   'login'
   },
 
-  onCheckUsername: function(event, input, form) {
+  init: function(form, config) {
+  },
+
+  checkUsername: function(event, input) {
     // do something when keydown event happens on username field
     console.log('onCheckUsername');
   },
 
-  onCheckPassword: function(event, input, form) {
+  checkPassword: function(event, input) {
     // do something when keydown event happens on password field
     console.log('onCheckPassword');
   },
 
-  onLogin: function(event, input, form) {
+  login: function(event, input) {
     // do something when click event happens on button submit
     console.log('onLogin');
 

@@ -48,72 +48,68 @@ You declare the fragment as a Kanji component by adding extra information into i
 
 ``` html
 <form data-com="LoginForm" data-cfg="{ 'debug': true }">
-  <input name="username" data-act="keydown:checkUsername"></input>
-  <input type="password" name="password" data-act="keydown:checkPassword"></input>
-  <input type="submit" value="Login" data-act="login"></input>
+  <input name="username"></input>
+  <input type="password" name="password"></input>
+  <input type="submit" value="Login"></input>
 </form>
 ```
-
-What happens here is you declare the form as a component named `LoginForm` with three actions `checkUsername`, `checkPassword` and `login`. `checkUsername` is bound to `keydown` event on the username field, `checkPassword` handles `keydown` event on password field and `login` handles `click` event on the submit button (click event is default event so you don't have to specify `click:login`).
 
 Next you implement LoginForm:
 
 ``` js
 Class(Kanji, {          // a component is a sub-class of Kanji
-  id   : "LoginForm",   // id is component unique identifier
-  debug: false,
+  id: 'LoginForm',      // id is component unique identifier
+
+  actions: {            // mapping actions
+    '[name=username]': 'keydown:checkUsername|keyup:checkUsername',
+    '[name=password]': 'keydown:checkPassword',
+    '[type=submit]':   'login'
+  },
 
   init: function(form, config) {
-    this.debug = config.debug;
     console.log('initialization');
   },
 
-  onCheckUsername: function(event, input, form) {
-    if (this.debug) {
-      console.log('checking username');
-    }
+  checkUsername: function(event, input) {
+    console.log('checking username');
   },
 
-  onCheckPassword: function(event, input, form) {
-    if (this.debug) {
-      console.log('checking password');
-    }
+  checkPassword: function(event, input) {
+    console.log('checking password');
   },
 
-  onLogin: function(event, input, form) {
-    if (this.debug) {
-      console.log('about to login');
-    }
+  login: function(event, input) {
+    console.log('about to login');
     return false;
   }
 });
 ```
 
-Import the script in the same page with the HTML fragment. When you start interacting with the form, you notice the component is instantiated and its handlers are executed (open your browser JavaScript console first). You can play with [this sample online at jsfiddle](http://jsfiddle.net/tannhu/H4fTe/6/), another more comprehensive sample can be found [here](http://jsfiddle.net/tannhu/ysXRk/3/).
+What happens here is you declare the form as a component named `LoginForm` with three actions `checkUsername`, `checkPassword` and `login`. `checkUsername` is bound to `keydown` and `keyup` events on the username field, `checkPassword` handles `keydown` event on password field and `login` handles `click` event on the submit button (click event is default event so you don't have to specify `click:login`).
+
+Import the script in the same page with the HTML fragment. When you start interacting with the form, you notice the component is instantiated and its handlers are executed (open your browser JavaScript console first). You can play with [this sample online](http://jsfiddle.net/tannhu/H4fTe/15/).
 
 ## Reference
 
-### Declarative HTML data attributes
+### HTML data attributes
 
-Kanji defines small set of custom HTML data attributes to declare component, configuration, action and component instantiation strategy.
+Kanji defines two custom HTML data attributes to declare a component and its configuration.
 
-| Name                                | Required  | Availability  | Default value   |
-| ----------------------------------- | --------- | ------------- | --------------- |
-| data-com="ComponentNameAsString"    | yes       | Component     |                 |
-| data-cfg="Any"                      | no        | Component     |                 |
-| data-act="action(s)"                | no        | Any           |                 |
-| data-lazy="false"                   | no        | Component     | true            |
+| Name                                | Required  | Availability  |
+| ----------------------------------- | --------- | ------------- |
+| data-com="ComponentNameAsString"    | yes       | Component     |
+| data-cfg="Any"                      | no        | Component     |
 
 #### data-com
 
 Add `data-com="YourComponentId"` into any HTML elements to declare it's a component. For example:
 
 ``` html
-<div data-com="MyExampleComponent">
+<div data-com="LoginForm">
 </div>
 ```
 
-Note that components can be nested.
+Components can be nested:
 
 ``` html
 <div data-com="Page">
@@ -128,71 +124,52 @@ Note that components can be nested.
 </div>
 ```
 
-#### data-lazy
-
-By default, all components are lazy instantiated. Meaning the JavaScript instance of the component will be created on demand, whenever an event happens inside it. If you want your component to be initialized when its DOM fragment is ready, add `data-lazy="false"`.
-
-``` html
-<div data-com="MyExampleComponent" data-lazy="false">
-</div>
-```
-
 #### data-cfg
 
-This data attribute is used to pass an extra parameter/configuration into your component. Declare it under `data-cfg="VALUE"`. VALUE can be anything.
+This data attribute is used to pass an extra parameter/configuration into your component.
 
 ``` html
-<div data-com="MyExampleComponent" data-cfg="{ 'foo': 'bar' }">
+<div data-com="LoginForm" data-cfg="{ 'debug': true }">
 </div>
 ```
 
-#### data-act
+### JavaScript API
 
-Declare action(s) on any element inside a component (including component's container itself) by using data-act attribute.
-
-**Syntax**:
-
-```html
-data-act="event1[,event2...]:handler|eventN:handlerN|..."
-```
-
-If event is not specify but only handler (i.e: `data-act="login"`) then handler will be bound to `'click'` event or `'touchend'` event (on mobile devices).
-
-**Supported events:**
-
-``` js
-blur change contextmenu dblclick error focus focusin focusout hover keydown keypress keyup load
-mousedown mouseenter mouseleave mousemove mouseout mouseover mouseup resize scroll select submit
-touchcancel touchleave touchmove touchstart unload
-```
-
-Sample of data-act declaration with multiple events and handlers.
-
-``` html
-<div data-com="MyExampleComponent" data-act="mouseenter:preloadData">
-  <input data-act="keydown,keyup:type|mouseenter:foo|mouseout:bar"></input>
-  <button data-act="hi">Say hi</button>
-  <a role="button" data-act="bye">Say bye</a>
-</div>
-```
-
-### Component API
-
-#### Component implementation
+#### id, type, and lazy
 
 A component is a class extends from Kanji with a unique component id.
 
 ``` js
-MyExampleComponent = Class(Kanji, {
-  id: "MyExampleComponent"
+LoginForm = Class(Kanji, {
+  id: 'LoginForm'
 });
 ```
 
-If you want to handle something when component DOM is ready. Implement `init()` method:
+Kanji supports two component types: instance and shared components. With instance component, one instance of the component is instantiated per its HTML fragment declaration. With shared component, only one instance of the component is instantiated to handle all HTML fragment declarations. Specifying shared component by adding `type: 'shared'` in component implementation:
 
 ``` js
-MyExampleComponent = Class(Kanji, {
-  id: "MyExampleComponent",
+LoginForm = Class(Kanji, {
+  id: 'LoginForm',
+  type: 'shared'
+});
+```
+
+By default, all components are lazy instantiated. Meaning a JavaScript instance of the component will be created on demand, when there's a need of creating it (normally when an event happens inside the component DOM). If you want your component to be initialized right away when its DOM fragment is ready, specify `lazy: false`.
+
+``` js
+LoginForm = Class(Kanji, {
+  id: 'LoginForm',
+  lazy: false
+});
+```
+
+#### init() and render()
+
+init() is the place to handle some initialization when component DOM is ready:
+
+``` js
+LoginForm = Class(Kanji, {
+  id: 'LoginForm',
 
   init: function(container, config) {
   }
@@ -202,76 +179,89 @@ MyExampleComponent = Class(Kanji, {
 * `container`: jQuery object represents the component element (HTML)
 * `config`: configuration declared in the component (if any)
 
-Map your declared actions to your component's methods by implementing `"on" + action methods`. When an action occurs, there are three parameters will be passed to its handler:
-
-* `event`: event object
-* `target`: jQuery object represents the target element
-* `container`: jQuery object represents the component element
+If you want to do some rendering when component DOM is ready, implement render() method. render() is invoked right after init().
 
 ``` js
-MyExampleComponent = Class(Kanji, {
-  id: "MyExampleComponent",
+LoginForm = Class(Kanji, {
+  id: 'LoginForm',
 
-  onHi: function(event, target, container) {
-  },
-
-  onBye: function(event, target, container) {
+  render: function(container) {
   }
 });
 ```
 
-#### Kanji reserved properties
+* `container`: jQuery object represents the component element (HTML)
 
-When implementing your components, note that Kanji reserves these properties for its internal use.
+#### actions
 
-| Name                                | Required  |
-| ----------------------------------- | --------- |
-| id                                  | yes       |
-| type                                | no        |
-| listeners                           | no        |
-| namespace                           | no        |
+`actions` is used to map HTML elements inside the component with events and handlers. Each entry in `actions` is a set of CSS selector to an HTML element, event names, and handler names.
 
-#### Inter-component communication
+``` js
+Class(Kanji, {
+  id: 'LoginForm',
+
+  actions: {
+    '[name=username]': 'keydown:checkUsername|keyup:checkUsername',
+    '[name=password]': 'keydown:checkPassword',
+    '[type=submit]':   'login'
+  },
+
+  checkUsername: function(event, input) {
+    console.log('checking username');
+  },
+
+  checkPassword: function(event, input) {
+    console.log('checking password');
+  },
+
+  login: function(event, input) {
+    console.log('about to login');
+    return false;
+  }
+});
+```
+
+#### listeners and notify(): Inter-component communication
 
 A component uses `notify()` to send notifications.
 
 ``` js
 Class(Kanji, {
-  id: "MyExampleComponent",
+  id: 'LoginForm',
 
-  onHi: function(event, target, container) {
-    this.notify("log.info", "Say hi");
+  sayHi: function(event, target) {
+    this.notify('log.info', 'Say hi');
   },
 
-  onBye: function(event, target, container) {
-    this.notify("log.info", "Say bye");
+  sayBye: function(event, target) {
+    this.notify('log.info', 'Say bye');
   }
 });
 ```
 
-Any components want to capture a notification need to implement a listener. For example, Logger listens to `log.info` to do some logging:
+Any components want to capture a notification need to implement a listener. For example, Logger listens to `log.info` to do logging:
 
 ``` js
 Class(Kanji, {
-  id: "Logger",
+  id: 'Logger',
 
   listeners: {
-    "log.info": function() {
+    'log.info': function(message) {
       // do something when being notified
     }
   }
 });
 ```
 
-Play with a sample [online](http://jsfiddle.net/tannhu/YFCVX/2/).
+Play with a sample [online](http://jsfiddle.net/tannhu/YFCVX/3/).
 
 Listeners in Kanji are inherited. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.
 
 #### Namespace and listeners
 
-Instances of non-shared components are able to communicate privately via namespace mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
+Instances of non-shared components are able to communicate intentionally via namespace mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
 
-Give an example ([see online](http://jsfiddle.net/tannhu/AzCdA/2/)), we have a Timer component listens to `'time:show'` event like this:
+Give an example ([see online](http://jsfiddle.net/tannhu/AzCdA/3/)), we have a Timer component listens to `time:show` event like this:
 
 ``` js
 Class(Kanji, {
@@ -292,10 +282,10 @@ Class(Kanji, {
 When having declarations:
 
 ``` html
-<script data-com="Timer/red" data-cfg="{ 'src': 'Red Timer' }" data-lazy="false"></script>
-<script data-com="Timer" data-cfg="{ 'src': 'Timer1' }" data-lazy="false"></script>
-<script data-com="Timer" data-cfg="{ 'src': 'Timer2' }" data-lazy="false"></script>
-<script data-com="Timer" data-cfg="{ 'src': 'Timer3' }" data-lazy="false"></script>
+<script data-com="Timer/red" data-cfg="{ 'src': 'Red Timer' }"></script>
+<script data-com="Timer" data-cfg="{ 'src': 'Timer1' }"></script>
+<script data-com="Timer" data-cfg="{ 'src': 'Timer2' }"></script>
+<script data-com="Timer" data-cfg="{ 'src': 'Timer3' }"></script>
 ```
 
 The call from a component:
@@ -326,7 +316,7 @@ Class(Kanji, {
     },
 
     /**
-     * Listen to 'time:up' event on other timers (Red timer excluded 'cause it's declared with namespace)
+     * Listen to 'time:up' event on all timers (Red timer include)
      */
     'time:up': function() {
     }
@@ -334,20 +324,7 @@ Class(Kanji, {
 });
 ```
 
-When a component is namespaced, its notifications are scoped in its namespace. In the example above, you see Red Timer is namespaced as 'red' hence in order to capture Red Timer '`time:up'` event, Listener declares `'time:up/red'`.
-
-Kanji implements simple namespace notify/listeners routing. In the example above, if Listener component is also namespaced, then it won't work as expected. So please keep your code simple!
-
-#### Shared instance
-
-By default, an instance of the component class is instantiated per each declared DOM fragment. Kanji supports shared instance where only one instance of the component is instantiated for all declared fragments. Enabling shared instance by adding `type="shared"` when implementing your component.
-
-``` js
-MyExampleComponent = Class(Kanji, {
-  id: "MyExampleComponent",
-  type: "shared"
-});
-```
+Kanji implements simple namespace notify/listeners routing. In the example above, if Listener component is also namespaced, then it won't work as expected.
 
 #### Inheritance and extending
 
@@ -355,100 +332,70 @@ Powered by [jsface](https://github.com/tannhu/jsface), Kanji allows multiple lev
 
 ``` js
 Component = Class(Kanji, {
-  id: "Component",
+  id: 'Component',
 
-  onModal: function(button, container) {
+  openModal: function(event, target) {
     // ...
   }
 });
 
 Dialog = Class(Component, {
-  id: "Dialog",
+  id: 'Dialog',
 
-  onModal: function(button, container) {
+  openModal: function(event, target) {
     // do something specifically for Dialog
 
     // call Component's onModal
-    Dialog.$superp.onModal.call(this, button, container);
+    Dialog.$superp.openModal.call(this, event, target);
   }
 });
 
 LoginDialog = Class(Component, {
-  id: "LoginDialog",
+  id: 'LoginDialog',
 
-  onModal: function(button, container) {
+  openModal: function(event, target) {
     // do something specifically for LoginDialog
 
     // call Dialog's onModal
-    LoginDialog.$superp.onModal.call(this, button, container);
+    LoginDialog.$superp.openModal.call(this, event, target);
   }
 });
 ```
 
-#### Delegable and non-delegable events
-
-In its implementation, Kanji delegates these events to document:
-
-``` js
-blur change contextmenu dblclick error focus focusin focusout keydown keypress
-keyup load mousedown mouseup resize scroll select submit touchcancel touchleave
-touchmove touchstart unload
-```
-
-Components have delegable actions only are able to detach and attach their DOM fragments as will. Kanji makes sure event handlers are bound properly.
-
-These below events are costly to delegate to document (Kanji's term: non-delegable events):
-
-``` js
-mouseenter mouseout mousemove mouseleave mouseover hover
-```
-
-Kanji binds non-delegable events to target elements directly. This approach helps to boost performance but results a downside: When a component which has non-delegable actions is detached from the page, all bound handlers are lost. When it's attached to the page again, it's developers' duty to tell Kanji to re-initialize the component by sending a `'com:init'`
-notification manually.
-
-A component has non-delegable actions is initialized automatically without the need of specifying `lazy="false"`.
-
 #### Kanji internal notifications
 
-Kanji notifies `'com:not-found'` when it tries to initialize a component but its implementation is not found. Frameworks built on top of Kanji can capture this notification to do some handy stuff like fetching scripts or error reporting, etc.
+Kanji has three internal notifications:
 
-You are able to force Kanji to initialize a component by sending a `'com:init'` notification.
+| Name                                | Description                             |
+| ----------------------------------- | --------------------------------------- |
+| com:not-found                       | Component implementation not found      |
+| com:init                            | Re-init a component                     |
+| com:config-not-wellformed           | Component configuration not well-formed |
+
+`com:not-found` is fired when Kanji tries to initialize a component but its implementation is not found. Frameworks built on top of Kanji can capture this notification to do some handy stuff like fetching scripts or error reporting, etc.
+
+You are able to force Kanji to initialize/re-init a component by sending a `com:init` notification.
 
 **Syntax:**
 
 ``` js
-Kanji.notify('com:init', container); // jQuery object represents the component DOM fragment
+Kanji.notify('com:init', container);
 ```
 
-What is the use of `'com:init'` notification? It's useful when you detach HTML fragment of a component which has actions bound to non-delegable events (`mouseenter`, `mouseout`, `mousemove`, `mouseleave`, `mouseover`, `hover`) then later on attach the fragment. In such situation, you need to tell Kanji to re-initialize the component again.
+What is the use of `com:init` notification? It's useful when you detach HTML fragment of a component which has actions bound to costly events (like `mouseenter`, `mouseout`, `mousemove`, `mouseleave`, `mouseover`, `hover`) then later on attach the fragment. In such situation, you need to tell Kanji to re-initialize the component again in order to make event handlers work properly.
 
-### More about instantiation
+#### Kanji reserved properties
 
-Kanji automatically initializes components with `data-lazy="false"` and components declare non-delegable actions. With delegable components (component with `data-lazy!="false" and declare only delegable actions), Kanji does not do anything until there's a user interaction happens inside their  HTML fragment. If there are multiple declarations of the same component on the page, Kanji instantiates only one instance of the component to handle in that fragment's scope. Imaging you have 100 declarations of a component named `Card`:
+When implementing your components, note that Kanji reserves these properties for its internal use.
 
-``` html
-<div data-com="Card">
-  <p>Card 1</p>
-  <button data-act="hello">Say hi</button>
-</div>
-<div data-com="Card">
-  <p>Card 2</p>
-  <button data-act="hello">Say hi</button>
-</div>
-
-...
-
-<div data-com="Card">
-  <p>Card 100</p>
-  <button data-act="hello">Say hi</button>
-</div>
-```
-
-When you click button `Say hi` on the first card (or any card), first instance of Card is instantiated. When you click `Say hi` on the second card, another instance is instantiated.
-
-What happens if you specify `type="shared"` in Card? When you first click `Say hi` on any card, one instance of Card is instantiated and this instance will be shared across all the cards inside the page, meaning when you click the button on another card, the shared instance will handle the event.
-
-Kanji has a garbage collector. When all the DOM fragments represent a component are detached, all of its instances will be removed. In the other word, components can be attached and detached as will.
+| Name                                | Required  |
+| ----------------------------------- | --------- |
+| id                                  | yes       |
+| type                                | no        |
+| lazy                                | no        |
+| actions                             | no        |
+| listeners                           | no        |
+| namespace                           | no        |
 
 ## Best practice
 
@@ -457,13 +404,13 @@ I would recommend to define a root class component which includes all shared act
 ``` js
 LI = {};
 LI.Component = Class(Kanji, {
-  id: "Component",
+  id: 'Component'
 
   // shared actions
 });
 
-LI.MyExampleComponent = Class(LI.Component, {
-  id: "MyExampleComponent",
+LI.LoginForm = Class(LI.Component, {
+  id: 'LoginForm'
 
   // ...
 });

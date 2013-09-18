@@ -1,10 +1,7 @@
 Class(Kanji, {
   id: 'Component',
+  type: 'shared',
 
-  /**
-   * Log a message
-   * @param any
-   */
   log: function() {
     this.notify('log:info', [].slice.call(arguments).join(' '));
   },

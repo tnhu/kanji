@@ -11,6 +11,7 @@
 Class(Kanji, {
   id  : 'ResourceLoader',
   type: 'shared',             /* one shared instance */
+  lazy: false,
 
   init: function(element, config) {
     var type, i, len, items, url,

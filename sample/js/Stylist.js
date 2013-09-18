@@ -1,29 +1,37 @@
 LI.Stylist = Class(LI.Component, {
   id  : 'Stylist',
   type: 'shared',
+  lazy: false,
 
-  /** @override */
+  actions: {
+    self          : 'mouseenter:preloadStylist',
+    '.bt-feedback': 'feedback',
+    '.bt-email'   : 'email|mouseenter,mouseout:trackingEmail',
+    '.bt-call'    : 'call',
+    '.bt-profile' : 'profile'
+  },
+
   init: function(element, config) {
     this.log('Stylist: init');
   },
 
-  onFeedback: function() {
+  feedback: function() {
     this.log('Stylist: Leave a feedback');
   },
 
-  onEmail: function() {
+  email: function() {
     this.log('Stylist: Send email to stylist');
   },
 
-  onCall: function() {
+  call: function() {
     this.log('Stylist: Make a call');
   },
 
-  onProfile: function() {
+  profile: function() {
     this.log('Stylist: View stylist\'s profile');
   },
 
-  onPreloadStylist: function(event, $container) {
+  preloadStylist: function(event, $container) {
     this.log('Stylist: onPreloadStylist. Do something when mouseenter');
   }
 });

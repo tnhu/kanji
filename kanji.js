@@ -7,32 +7,28 @@
  * @author Tan Nhu, http://lnkd.in/tnhu
  * @license MIT
  * @dependency jsface, jsface.ready, jQuery, JSON || jQuery.parseJSON
+ * @version 0.2.0
  */
 Class(function() {
   var CLICK                = 'click',
-      TOUCH_END            = 'touchend',                              // on mobile: translate 'click' to 'touchend' (faster)
+      TOUCH_END            = 'touchend',                              // on mobile: 'click' is translated to 'touchend' (faster)
 
       // data attribute names
       DATA_COMPONENT       = 'data-com',
-      DATA_NS              = 'data-ns',                               // namespace attribute
       DATA_CONFIG          = 'data-cfg',
-      DATA_INSTANCE_ID     = 'data-instance',                         // component instance id (value is auto generated)
+      DATA_INSTANCE        = 'data-instance',                         // component instance id (value is auto generated)
       DATA_ACT             = 'data-act',
-      DATA_LAZY            = 'data-lazy',
 
       // selectors
       SELECTOR_COMPONENT   = '[data-com]',                            // component selector
       SELECTOR_ACT         = '[data-act]',                            // action selector
 
-      // delegable events (from document), except click and touchend (unperformant events should be moved to NONDELEGABLE_EVENTS)
-      DELEGABLE_EVENTS     = 'blur change contextmenu dblclick error focus focusin focusout keydown keypress keyup load mousedown mouseup resize scroll select submit touchcancel touchleave touchmove touchstart unload',
-
-      // indelegable events (delegable but unperformant)
-      NONDELEGABLE_EVENTS  = { mouseenter:1, mouseout:1, mousemove:1, mouseleave:1, mouseover:1, hover:1 },
-
-      NONDELEGABLE_REGREX  = /\b(mouseenter|mouseout|mousemove|mouseleave|mouseover|hover)\b/,
+      // delegable events (from document), except click and touchend
+      DELEGABLE_EVENTS     = 'mousedown touchstart keydown',
+      DELEGABLE_FLAGS      = { mousedown: 1, touchstart: 1, keydown: 1 },
 
       FALSE                = 'false',
+      EMPTY                = '',
 
       // message prefix
       KANJI                = 'Kanji:',
@@ -44,6 +40,7 @@ Class(function() {
 
       // shortcuts
       functionOrNil        = jsface.functionOrNil,
+      mapOrNil             = jsface.mapOrNil,
       $                    = jQuery,
       timeout              = setTimeout,
       slice                = [].slice,
@@ -52,8 +49,9 @@ Class(function() {
       // internal vars
       isDomReady           = 0,
       lazySelectorQueue    = [],                                      // lazy component selectors
-      autoId               = 1,                                       // auto generated instance id
-      repository,                                                     // components and their instances reference repository
+      instanceAutoId       = 1,                                       // auto generated instance id
+      actionAutoId         = 1,                                       // auto generated action id
+      repository           = { instanceRefs: {} },                    // components and their instances reference repository { componentId: Component }
       actionFlag;                                                     // prevent 'click' handler from executing when 'touchend' handler already executed
 
 
@@ -63,12 +61,15 @@ Class(function() {
    * @return a valid JavaScript typed object, or the original string if it's not a JavaScript typed object.
    */
   function configAsObjectOrRaw(config) {
-    // preformat the string, config support single quote
-    config = config && config.replace(/'/g, '"');
+    // preformat the string, config support single quote and unquoted keys
+    config = config && config.replace(/'/g, '"'); // TODO: support unquoted keys, BUG: John's -> John"s
 
     try {
       config = config && parseJSON(config);
-    } catch (error) {}
+    } catch (error) {
+      console.log(ERROR, 'config not well-formed', config);
+      Kanji.notify('com:config-not-wellformed', config);
+    }
 
     return config;
   }
@@ -82,7 +83,7 @@ Class(function() {
     var actions = {},
         parts   = action && action.split('|'),         // [ "click:switchView", "mouseenter,mouseout:preloadStylist" ]
         len     = parts && parts.length || 0,          // 2
-        pair, pairLen, actionSet, actionSetLen;
+        pair, pairLen, actionSet, actionSetLen, event;
 
     while (len--) {
       pair    = parts[len].split(':');                 // [ "mouseenter,mouseout", "preloadStylist" ]
@@ -97,7 +98,13 @@ Class(function() {
         actionSetLen = actionSet.length;
 
         while (actionSetLen--) {
-          actions[actionSet[actionSetLen]] = pair[1];  // actions.mouseenter = "preloadStylist"
+          event = actionSet[actionSetLen];
+          actions[event] = pair[1];                    // actions.mouseenter = "preloadStylist"
+
+          // add non-delegable
+          if ( !DELEGABLE_FLAGS[event]) {
+            actions.nondelegable = true;
+          }
         }
       } else {
         console.log(ERROR, 'unrecognized action', action);
@@ -110,245 +117,184 @@ Class(function() {
   /**
    * Lookup shared instance of a component. If there's no instance found, instantiate a new one.
    * @param component component class
-   * @return pair of { instanceId: instance id, instance: instance object }.
+   * @return instance info of the shared instance.
    */
-  function lookupOrInstantiateSharedInstance(Component) {
+  function lookupSharedInstance(Component) {
     var instanceRefs = repository.instanceRefs,
-        instanceId, instance;
+        instanceId, instanceInfo, instance;
 
     // look up in instanceRefs, if found then return
     for (instanceId in instanceRefs) {
-      instance = instanceRefs[instanceId];
+      instanceInfo = instanceRefs[instanceId];
+      instance     = instanceInfo.instance;
+
       if (instance instanceof Component) {
-        return { instanceId: instanceId, instance: instance };
+        return { instance: instance, instanceId: instanceId };
       }
     }
 
-    // not found, create a new one
-    return { instanceId: autoId++, instance: new Component() };
+    // not found, create a new one, put into instanceRefs, then return
+    instance     = new Component();
+    instanceId   = instanceAutoId++;
+    instanceInfo = { instance: instance, instanceId: instanceId };
+
+    // add instance info into instanceRefs
+    instanceRefs[instanceId] = instanceInfo;
+
+    return instanceInfo;
   }
 
-  /**
-   * Locate instance information of a component in its HTML scope.
-   * @param element jQuery element.
-   * @param initIfNeeded false to locate only, otherwise initialize the component if there's no
-   *        instance bound to the HTML scope yet.
-   * @return instance of the component bound to the HTML scope.
-   */
-  function instanceInfoOrNil(element, initIfNeeded) {
-    var $parent     = element.closest(SELECTOR_COMPONENT),
-        instanceId  = $parent.length && $parent.attr(DATA_INSTANCE_ID),
-        instance    = instanceId && repository.instanceRefs[instanceId];
-
-    // if instance was not created before and initIfNeeded !== false and parent is a component then init the component
-    if ( !instance && initIfNeeded !== false && $parent.length) {
-      instance = initComponentFromContainer($parent);
-    }
-
-    return instance && { parent: $parent, instance: instance };
-  }
-
-  /**
-   * Invoke action handler from an event.
-   * @param e event object associated with target when the event happens
-   * @param translatedEventType if provided, translatedEventType is used to override e.type (optional).
-   */
-  function invokeActionHandlerFromEvent(e, translatedEventType) {
-    var $target      = translatedEventType ? $(e.target) : $(this),
-        eventName    = translatedEventType || e.type,                // event type
-        meta         = elementMetadataOrNil($target),                // retrieve element meta from target context
-        instanceInfo = instanceInfoOrNil($target, true),             // locate instance info in context (note: never use from meta as it's out of context already)
-        meta, instance, fnName, fn;
-
-    if (meta && instanceInfo) {
-      instance = instanceInfo.instance;
-      fnName   = meta.actions[eventName];
-
-      // if action is declared, locate and execute it, otherwise, just ignore
-      if (fnName) {
-        fnName   = [ 'on', fnName.charAt(0).toUpperCase(), fnName.slice(1) ].join('');
-        fn       = instance && functionOrNil(instance[fnName]);
-
-        if (fn) {
-          return fn.call(instance, e, $target, instanceInfo.parent);
-        } else {
-          console.log(ERROR, fnName, 'not yet implemented');
-        }
-      }
-    }
-  }
-
-  /**
-   * Bind DOM events to component container and its actions HTML elements which may be not performant
-   * if being delegated. Events like mouseenter, mouseout are very costly if being delegated to document level.
-   * @param meta component metadata
-   */
-  function nonDelegableEventsBinding(meta) {
-    var event, index;
-
-    for (event in meta.actions) {                             // loop through actions
-      if (NONDELEGABLE_EVENTS[event]) {                        // if event is on the list then bind it
-        meta.element.on(event, invokeActionHandlerFromEvent);
-      }
-    }
-
-    for (index in meta.children) {
-      nonDelegableEventsBinding(meta.children[index]);
-    }
-  }
-
-  /**
-   * Get direct action elements of a component element.
-   * @param $element jQuery
-   */
-  function directActionElementsOrNil($element) {
-    var $actions = $element.children(':not([data-com])[data-act]');
-
-    return $actions.length && $actions || 0;
-  }
-
-  /**
-   * Parse element and construct declared metadata structure.
-   * @param $element jQuery element.
-   * @param componentMeta internal use, never pass it
-   * @param ignoreChildrenScanning internal use, never pass it
-   * @return declared data structure or 0 if element is not a declared object. If element is a component,
-   * the function return { instanceId:, element:, config: }, if it's an action, return { actions: }
-   */
-  function elementMetadataOrNil($element) {
-    var result = 0,
-        componentId, action, $actions, len, children, rawId, split, namespace;
-
-    if ( !$element || !$element.length) {
-      return result;
-    }
-
-    rawId = $element.attr(DATA_COMPONENT);
-    if (rawId) {
-      split       = rawId.split('/');
-      componentId = split.shift();
-      namespace   = split.length ? split.join('') : null;
-
-      result = {
-        element    : $element,
-        componentId: componentId,
-        namespace  : namespace,
-        config     : configAsObjectOrRaw($element.attr(DATA_CONFIG)),
-        actions    : parseAction($element.attr(DATA_ACT))           // actions on component level, i.e data-com="Stylist" data-act="mouseenter:preloading"
-      };
-
-      // get metadata of direct actions
-      $actions = directActionElementsOrNil($element);
-      if ($actions) {
-        len      = $actions.length;
-        children = [];
-
-        while (len--) {
-          children.push(elementMetadataOrNil($($actions[len])));
-        }
-        result.children = children;
-      }
-    } else {
-      action = $element.attr(DATA_ACT);
-      if (action) {
-        result = {
-          element: $element,
-          actions: parseAction(action)
-        };
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Initialize a component.
-   * @param $container jQuery object which declares the component.
-   * @see 'com.init' listener.
-   */
-  function initComponentFromContainer($container) {
-    var meta         = elementMetadataOrNil($container),
+  function actionExecutor(e, $passedTarget, passedEventName) {
+    var $target      = $passedTarget ? $passedTarget : $(e.target),
+        eventName    = passedEventName ? passedEventName : e.type,
         instanceRefs = repository.instanceRefs,
-        componentId, instanceId, config, Component,
-        type, sharedInstanceInfo, instance, namespace, eventId, listeners, instanceListeners;
+        instanceInfo, instanceId, instance, fnName, instanceFn,
+        actionInfo, actionId;
 
-    if (meta) {
-      componentId  = meta.componentId;              // get component identifier
-      instanceId   = meta.instanceId;               // get auto generated instanceId attached to this component (if any)
-      Component    = repository[componentId];       // get the component class in repository
+    actionInfo = $target.attr(DATA_ACT);
 
-      if (Component) {
-        type   = Component.type;                    // get component type (instance|shared)
-        config = meta.config;                       // get config
+    if (actionInfo) {                      // action was initialized before
+      actionInfo = actionInfo.split('/');  // data-act-EVENT-NAME="1/20"
+      instanceId = actionInfo[0];          // "1"
+      actionId   = actionInfo[1];          // "20"
 
-        switch (type) {
-        case 'shared':
-          // 'shared': lookup or create a new shared instance of Component
-          sharedInstanceInfo = instanceRefs[instanceId] || lookupOrInstantiateSharedInstance(Component);
-          instanceId         = sharedInstanceInfo.instanceId;                                       // get instance id
-          instance           = instanceRefs[instanceId] = sharedInstanceInfo.instance;              // get actual instance
-          break;
+      instanceInfo = instanceRefs[instanceId];
 
-        default:
-          // default is 'instance', simply create a new instance per this $container
-          instanceId = instanceId || autoId++;                       // if instanceId exists, use it, otherwise, generate a new instanceId
-          instance   = instanceRefs[instanceId] || new Component();  // if instance exists in instanceRefs, reuse it (in case of detach/attach), otherwise, create a new one
-          instanceRefs[instanceId] = instance;                       // update instanceRefs
-          namespace                = meta.namespace;
-          instance.namespace       = namespace;
+      if ( !instanceInfo) {
+        return initComponentFromEvent(e, eventName, false, instanceId);
+      }
 
-          // update instance.listeners if namespace is declared
-          // instance.listeners[eventId] = instance.listeners[eventId + '/' + namespace]
-          if (namespace) {
-            listeners         = instance.listeners;
-            instanceListeners = {};
+      instance     = instanceInfo.instance;
+      fnName       = instanceInfo[actionId][eventName];
+      instanceFn   = functionOrNil(instance[fnName]);
 
-            for (eventId in listeners) {
-              instanceListeners[eventId + '/' + namespace] = instanceListeners[eventId] = listeners[eventId];
-            }
-            instance.listeners = instanceListeners;
-          }
-          break;
+      if (fnName) {
+        if (instanceFn) {
+          return instanceFn.call(instance, e, $target);
+        } else {
+          console.log(ERROR, fnName, 'not implemented');
         }
-
-        // init is called every time, no matter what type is
-        instance.init($container, config);
-
-        // mark the component is already initialized
-        $container.attr(DATA_INSTANCE_ID, instanceId);
-
-        // bind self binding events (events which can't not be delegated as could not be performant)
-        nonDelegableEventsBinding(meta);
-      } else {
-        console.log(ERROR, 'Component not found', componentId);
-
-        // notify interested listeners (script loader, error reporter maybe)
-        Kanji.notify('com:not-found', componentId, $container);
       }
     }
-
-    return instanceRefs[instanceId];
   }
 
-  /**
-   * Check if a non-lazy component has some non-delegable actions in it. If it does then
-   * initialize it automatically (without the need of specifying lazy="false").
-   * @param $container container
-   */
-  function checkToInitNonLazyComponentFromContainer($container) {
-    var act       = $container.attr(DATA_ACT),
-        actions   = act ? [ act ] : [],
-        $children = $container.find(SELECTOR_ACT),
-        len       = $children.length;
+  function mapActionsToElements($container, instanceInfo) {
+    var instance   = instanceInfo.instance,
+        instanceId = instanceInfo.instanceId,
+        actions    = instance.actions,
+        selector, actionMapping, actionEvent, actionId,
+        $element;
 
-    while (len--) {
-      actions.push($children[len].getAttribute(DATA_ACT));
+    for (selector in actions) {
+      $element = (selector === 'self') ? $container : $container.find(selector);
+
+      if ($element.length) {
+        actionId = actionAutoId++;
+        $element.attr('data-act', instanceId + '/' + actionId);
+        actionMapping = {};
+
+        for (actionEvent in actions[selector]) {
+          actionMapping[actionEvent] = actions[selector][actionEvent];
+
+          // bind non-delegable event to an internal function -> route to mapping later
+          if ( !DELEGABLE_FLAGS[actionEvent]) {
+            $element.on(actionEvent, actionExecutor);
+          }
+        }
+        instanceInfo[actionId] = actionMapping;
+      }
     }
+  }
 
-    actions = actions.join(' ');
+  function updateListeners(instance, namespace) {
+    var instanceListeners, eventId, listeners;
 
-    if (NONDELEGABLE_REGREX.test(actions)) {
-      initComponentFromContainer($container);
+    if (namespace) {
+      instance.namespace = namespace;
+
+      // update instance.listeners if namespace is declared
+      // instance.listeners[eventId] = instance.listeners[eventId + '/' + namespace]
+      listeners         = instance.listeners;
+      instanceListeners = {};
+
+      for (eventId in listeners) {
+        instanceListeners[eventId + '/' + namespace] = instanceListeners[eventId] = listeners[eventId];
+      }
+      instance.listeners = instanceListeners;
+    }
+  }
+
+  function initComponentFromEvent(e, translatedEventType, isLazy, reinitWithInstanceId) {
+    var $target      = translatedEventType ? $(e.target) : $(this),
+        eventName    = translatedEventType || e.type,
+        instanceRefs = repository.instanceRefs,
+        instanceInfo, instance, instanceId, fnName, instanceFn,
+        $container, dataComValue, componentId, Component,
+        actionInfo, actionId, actionName, actionMapping,
+        type, config, actions, selector, actionEvent,
+        $element;
+
+    // get event binding id, if any
+    actionInfo = $target.attr(DATA_ACT);
+
+    if ( !reinitWithInstanceId && actionInfo) {
+      return actionExecutor(e, $target, eventName);
+    } else {
+      // get component container
+      $container = $target.closest(SELECTOR_COMPONENT);
+
+      if ($container.length) {
+        instanceId = $container.attr(DATA_INSTANCE);
+
+        // instanceId exists and actionsInfo = nil: eventName is not declared, skip processing
+        if (instanceId && !reinitWithInstanceId) { return; }
+
+        dataComValue = $container.attr(DATA_COMPONENT);
+        componentId  = dataComValue.split('/')[0];        // remove namespace
+        Component    = repository[componentId];
+
+        if ( !Component) {
+          console.log(ERROR, 'Component not found', componentId);
+          Kanji.notify('com:not-found', componentId, $container);
+        } else {
+          type   = Component.prototype.type;
+          config = configAsObjectOrRaw($container.attr(DATA_CONFIG));
+
+          switch (type) {
+          case 'shared':
+            instanceInfo = lookupSharedInstance(Component);
+            instance     = instanceInfo.instance;
+            instanceId   = instanceInfo.instanceId;
+            break;
+
+          default:
+            instance     = new Component();
+            instanceId   = reinitWithInstanceId || instanceAutoId++;
+            instanceInfo = { instance: instance, instanceId: instanceId };
+
+            instanceRefs[instanceId] = instanceInfo;
+            updateListeners(instance, dataComValue.substring(componentId.length + 1));
+            break;
+          }
+
+          mapActionsToElements($container, instanceInfo);
+          $container.attr(DATA_INSTANCE, instanceId);
+
+          // invoke init()
+          instance.init($container, config);
+
+          // invoke render()
+          instance.render($container);
+
+          // relay the event
+          if ( !isLazy) {
+            return actionExecutor(e);
+          }
+
+          // remove temporary key in instanceInfo
+          delete instanceInfo.instanceId;
+        }
+      }
     }
   }
 
@@ -363,17 +309,17 @@ Class(function() {
     // look up in instanceRefs, if found then return
     for (instanceId in instanceRefs) {
       // zero is Kanji itself, let's skip the boss
-      if (instanceId === "0") {
+      if (instanceId === '0') {
         continue;
       }
 
-      element = $([ '[', DATA_INSTANCE_ID, '=', instanceId, ']' ].join(''));
+      element = $([ '[', DATA_INSTANCE, '=', instanceId, ']' ].join(EMPTY));
 
       if ( !element.length) {
         delete instanceRefs[instanceId];
       }
 
-      // don't block UI when GC is working, ever
+      // don't block UI while GC is working, ever
       if (+new Date() - startTime > GC_MAX_WORKING_TIME) {
         break;
       }
@@ -397,14 +343,17 @@ Class(function() {
             instanceId, instance, listeners, event;
 
         // translate eventId to support namespace (for non-shared components only)
-        eventId = (this.type === 'shared') ? eventId : (this.namespace ? [ eventId, '/', this.namespace ].join('') : eventId);
+        eventId = (this.type === 'shared') ? eventId : (this.namespace ? [ eventId, '/', this.namespace ].join(EMPTY) : eventId);
 
         for (instanceId in instanceRefs) {
-          instance  = instanceRefs[instanceId];
-          listeners = instance.listeners;
+          instance  = instanceRefs[instanceId].instance || instanceRefs[instanceId]; // instanceRefs[instanceId] is Kanji
 
-          if (listeners[eventId]) {
-            listeners[eventId].apply(instance, args);
+          if (instance) {
+            listeners = instance.listeners;
+
+            if (listeners[eventId]) {
+              listeners[eventId].apply(instance, args);
+            }
           }
         }
 
@@ -416,12 +365,17 @@ Class(function() {
     },
 
     /**
-     * init is called when component's attached DOM element is ready. Normally subclasses overrides this method.
+     * init is called when component's attached DOM element is ready.
      * @param config configuration.
-     * @param element jQuery attached DOM object.
+     * @param element jQuery attached component DOM object.
      */
-    init: function(element, config) {
-    },
+    init: function(element, config) {},
+
+    /**
+     * Optional custom rendering after init().
+     * @param element jQuery attached component DOM object.
+     */
+    render: function(element) {},
 
     /**
      * Event listeners as pair of eventId: handler()
@@ -432,7 +386,8 @@ Class(function() {
      * Ready handler: capture sub-class definitions, save in repository and do initialization if needed.
      */
     $ready: function(clazz, parent, api) {
-      var componentId, componentSelector, eventId, listeners, parent, superp;
+      var componentId, componentSelector, eventId, listeners, parent,
+          superp, proto, actions, actionSelector;
 
       if (this !== clazz) {
         componentId = api.id;
@@ -440,11 +395,12 @@ Class(function() {
         if (componentId) {
           if ( !repository[componentId]) {
             repository[componentId] = clazz;
-            componentSelector       = [ '[data-com="', componentId, '"],[data-com^="', componentId, '/"]' ].join(''); // TODO benchmark this selector
+            componentSelector       = [ '[data-com="', componentId, '"],[data-com^="', componentId, '/"]' ].join(EMPTY); // TODO benchmark this selector
 
             // merge listeners: no multiple inheritance support, just single parent
             superp = clazz.$superp;
             parent = clazz.$super;
+            proto  = clazz.prototype;
 
             while (superp) {
               listeners = superp.listeners;
@@ -458,21 +414,29 @@ Class(function() {
               parent = parent.$super;
             }
 
-            // save component type in class for referencing later
-            if (api.type) {
-              clazz.type = api.type;
+            // parse actions
+            actions = mapOrNil(api.actions);
+            if (actions) {
+              for (actionSelector in actions) {
+                actions[actionSelector] = parseAction(actions[actionSelector]);
+
+                // if nondelegable is found, add hasNondelegableEvents to clazz
+                if (actions[actionSelector].nondelegable) {
+                  clazz.hasNondelegableEvents = true;
+                  delete actions[actionSelector].nondelegable;
+                }
+              }
+              proto.actions = actions;
             }
 
-            // do initialize for declared data-lazy="false" fragments if DOM is ready
+            // do initialize for declared lazy: false fragments if DOM is ready
             // otherwise, put component selector in queue for later initialization
             if (isDomReady) {
               $(componentSelector).each(function() {
                 var th = $(this);
 
-                if (th.attr(DATA_LAZY) === FALSE) {
-                  initComponentFromContainer(th);
-                } else {
-                  checkToInitNonLazyComponentFromContainer(th);
+                if (proto.lazy === false || clazz.hasNondelegableEvents) {
+                  initComponentFromEvent({ target: th[0] }, CLICK, true);
                 }
               });
             } else {
@@ -480,7 +444,7 @@ Class(function() {
             }
           }
         } else {
-          console.log(ERROR, 'componentId not defined on api', api);
+          console.log(ERROR, 'id not found on', api);
         }
       }
     },
@@ -499,8 +463,11 @@ Class(function() {
               /**
                * Send a 'com:init' notification to init/reinit a specific component.
                * @param container jQuery container object
+               * @param forceReinit true to force a complete re-initialization
                */
-              'com:init': initComponentFromContainer
+              'com:init': function($container) {
+                initComponentFromEvent({ target: $container[0] }, CLICK, true, $container.attr(DATA_INSTANCE));
+              }
             }
           }
         }
@@ -510,7 +477,7 @@ Class(function() {
         var $document  = $(document),
             len        = lazySelectorQueue.length,   // lazySelectorQueue stores selectors to data-lazy="false" element and not initialized yet
             queueIndex = 0,
-            $container, count, containerIndex, $con;
+            $containers, count, containerIndex, $container, componentId, Component;
 
         // Mark flag that DOM is ready. $ready may be executed after DOM ready, this flag
         // ensures $ready knows how to initialize none-lazy components
@@ -518,41 +485,37 @@ Class(function() {
 
         // Initialize none-lazy/none-initialized components which have classes in place (script imported)
         while (queueIndex < len) {
-          $container     = $(lazySelectorQueue[queueIndex++]);
-          count          = $container.length;
+          $containers    = $(lazySelectorQueue[queueIndex++]);
+          count          = $containers.length;
           containerIndex = 0;
 
           if (count) {
             while (containerIndex < count) {
-              $con = $($container[containerIndex++]);
+              $container   = $($containers[containerIndex++]);
+              componentId = $container.attr(DATA_COMPONENT).split('/')[0],
+              Component   = repository[componentId];
 
-              if ($con.attr(DATA_LAZY) === FALSE) {
-              initComponentFromContainer($con);
-              } else {
-                checkToInitNonLazyComponentFromContainer($con);
+              if (Component.prototype.lazy === false || Component.hasNondelegableEvents) {
+                initComponentFromEvent({ target: $container[0] }, CLICK, true);
               }
             }
           }
         }
 
-        // Notify some components have data-lazy="false" but not initialized because scripts are not imported?
-        //  -> No need because of lazy script importing
-        // $(':not([data-instance])[data-com][data-lazy]');
-
         // Delegate default event type (click or touchend) on [data-act] elements to document
-        $document.on(TOUCH_END, SELECTOR_ACT, function(event) {
+        $document.on(TOUCH_END, function(event) {
           actionFlag = true;                                          // prevent 'click' handler from executing
-          return invokeActionHandlerFromEvent(event, CLICK);
-        }).on(CLICK, SELECTOR_ACT, function(event) {
+          return initComponentFromEvent(event, CLICK);
+        }).on(CLICK, function(event) {
           if ( !actionFlag) {                                         // only execute handler if 'touchend' handler was not executed
-            return invokeActionHandlerFromEvent(event, CLICK);
+            return initComponentFromEvent(event, CLICK);
           }
           actionFlag = false;
         });
 
         // Bind delegable events to $document
         $document.on(DELEGABLE_EVENTS, function(event) {
-          return invokeActionHandlerFromEvent(event, event.type);
+          return initComponentFromEvent(event, event.type);
         });
 
         // Schedule garbage collection on detached DOM elements (DOM detach -> remove instance reference)
