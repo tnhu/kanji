@@ -95,10 +95,10 @@ Import the script in the same page with the HTML fragment. When you start intera
 
 Kanji defines two custom HTML data attributes to declare a component and its configuration.
 
-| Name                                | Required  | Availability  |
-| ----------------------------------- | --------- | ------------- |
-| data-com="ComponentNameAsString"    | yes       | Component     |
-| data-cfg="Any"                      | no        | Component     |
+| Name                                | Required  |
+| ----------------------------------- | --------- |
+| data-com="ComponentNameAsString"    | yes       |
+| data-cfg="Any"                      | no        |
 
 #### data-com
 
