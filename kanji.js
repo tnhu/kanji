@@ -27,7 +27,7 @@ Class(function() {
 
       // delegable events (to document) (click and touchend are delegated specifically)
       DELEGABLE_EVENTS     = 'mousedown touchstart keydown',
-      DELEGABLE_FLAGS      = { mousedown: 1, touchstart: 1, keydown: 1 },
+      DELEGABLE_FLAGS      = { mousedown: 1, touchstart: 1, keydown: 1, click: 1, touchend: 1 },
 
       EMPTY                = '',
 
