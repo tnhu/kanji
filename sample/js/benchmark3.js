@@ -1,5 +1,6 @@
 Class(Kanji, {
   id: 'LoginForm',
+  lazy: false,
 
   actions: {
     '[name=username]': 'keydown:checkUsername',
@@ -8,7 +9,8 @@ Class(Kanji, {
   },
 
   init: function(form, config) {
-    config.log('init');
+    console.log('init');
+    ends.push(+new Date());
   },
 
   checkUsername: function(event, input) {

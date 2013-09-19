@@ -1,5 +1,6 @@
 Class(Kanji, {
   id: 'LoginForm',
+  type: 'shared',
 
   actions: {
     '[name=username]': 'keydown:checkUsername',
@@ -8,7 +9,7 @@ Class(Kanji, {
   },
 
   init: function(form, config) {
-    config.log('init');
+    console.log('init');
   },
 
   checkUsername: function(event, input) {

@@ -17,9 +17,7 @@ Class(Kanji, {
     var type, i, len, items, url,
         head = $('head');
 
-    //
     // TODO cache urls to make sure there's no duplication
-    //
     for (type in config) {
       items = config[type];
 
@@ -32,7 +30,7 @@ Class(Kanji, {
           break;
 
         case 'css':
-          head.append("<link rel='stylesheet' type='text/css' href='"  + url + "' />");
+          head.append("<link rel='stylesheet' href='"  + url + "' />");
           break;
 
         case 'img':
