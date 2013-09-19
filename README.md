@@ -221,7 +221,7 @@ Class(Kanji, {
 });
 ```
 
-Kanji supports inheritance in `actions`. A sub-class inherits actions from its parent, redefines them, or add more actions.
+Kanji supports inheritance in `actions`. A sub-class inherits actions from its parent. It can also redefine them, or add more actions.
 
 ``` js
 Class(Kanji, {

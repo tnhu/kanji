@@ -468,8 +468,7 @@ Class(function() {
      * Ready handler: capture sub-class definitions, save in repository and do initialization if needed.
      */
     $ready: function(clazz, parent, api) {
-      var componentId, componentSelector, eventId, listeners, parent,
-          superp, proto, actions, actionSelector;
+      var componentId, componentSelector;
 
       if (this !== clazz) {
         componentId = api.id;
@@ -488,7 +487,7 @@ Class(function() {
               $(componentSelector).each(function() {
                 var th = $(this);
 
-                if (proto.lazy === false || clazz.hasNondelegableEvents) {
+                if (clazz.prototype.lazy === false || clazz.hasNondelegableEvents) {
                   initComponentFromEvent({ target: th[0] }, CLICK, true);
                 }
               });

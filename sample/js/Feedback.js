@@ -1,5 +1,5 @@
 LI.Feedback = Class(LI.Component, {
-  id  : 'Feedback',
+  id: 'Feedback',
 
   actions: {
     '.name': 'keydown,keyup:checkingFeedback'
