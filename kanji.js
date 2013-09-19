@@ -9,7 +9,7 @@
  * @author Tan Nhu, http://lnkd.in/tnhu
  * @license MIT
  * @dependency jsface, jsface.ready, jQuery, JSON || jQuery.parseJSON
- * @version 0.2.1
+ * @version 0.2.2
  */
 Class(function() {
   var CLICK                = 'click',
