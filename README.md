@@ -221,6 +221,32 @@ Class(Kanji, {
 });
 ```
 
+Kanji supports inheritance in `actions`. A sub-class inherits actions from its parent, redefines them, or add more actions.
+
+``` js
+Class(Kanji, {
+  id: 'Dialog',
+
+  actions: {
+    self: 'mouseenter:fetch|mouseout:fetch'
+  },
+
+  fetch: function() {
+  }
+});
+
+Class(Component, {
+  id: 'LoginDialog',
+
+  actions: {
+    self: 'mousedown:contextMenu|mouseout:contextMenu'   // inherit 'mouseenter', override 'mouseout', add 'mousedown'
+  },
+
+  contextMenu: function() {
+  }
+});
+```
+
 #### listeners and notify(): Inter-component communication
 
 A component uses `notify()` to send notifications.
@@ -255,7 +281,7 @@ Class(Kanji, {
 
 Play with a sample [online](http://jsfiddle.net/tannhu/YFCVX/3/).
 
-Listeners in Kanji are inherited. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.
+Like `actions`, `listeners` in Kanji are inherited. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.
 
 #### Namespace and listeners
 
@@ -345,7 +371,7 @@ Dialog = Class(Component, {
   openModal: function(event, target) {
     // do something specifically for Dialog
 
-    // call Component's onModal
+    // call Component's openModal
     Dialog.$superp.openModal.call(this, event, target);
   }
 });
@@ -356,7 +382,7 @@ LoginDialog = Class(Component, {
   openModal: function(event, target) {
     // do something specifically for LoginDialog
 
-    // call Dialog's onModal
+    // call Dialog's openModal
     LoginDialog.$superp.openModal.call(this, event, target);
   }
 });

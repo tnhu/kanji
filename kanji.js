@@ -9,27 +9,26 @@
  * @author Tan Nhu, http://lnkd.in/tnhu
  * @license MIT
  * @dependency jsface, jsface.ready, jQuery, JSON || jQuery.parseJSON
- * @version 0.2.0
+ * @version 0.2.1
  */
 Class(function() {
   var CLICK                = 'click',
-      TOUCH_END            = 'touchend',                              // on mobile: 'click' is translated to 'touchend' (faster)
+      TOUCH_END            = 'touchend',                                                           // on mobile: 'click' is translated to 'touchend' (faster)
 
       // data attribute names
       DATA_COMPONENT       = 'data-com',
       DATA_CONFIG          = 'data-cfg',
-      DATA_INSTANCE        = 'data-instance',                         // component instance id (value is auto generated)
+      DATA_INSTANCE        = 'data-instance',                                                      // component instance id (value is auto generated)
       DATA_ACT             = 'data-act',
 
       // selectors
-      SELECTOR_COMPONENT   = '[data-com]',                            // component selector
-      SELECTOR_ACT         = '[data-act]',                            // action selector
+      SELECTOR_COMPONENT   = '[data-com]',                                                         // component selector
+      SELECTOR_ACT         = '[data-act]',                                                         // action selector
 
-      // delegable events (from document), except click and touchend
+      // delegable events (to document) (click and touchend are delegated specifically)
       DELEGABLE_EVENTS     = 'mousedown touchstart keydown',
       DELEGABLE_FLAGS      = { mousedown: 1, touchstart: 1, keydown: 1 },
 
-      FALSE                = 'false',
       EMPTY                = '',
 
       // message prefix
@@ -37,8 +36,8 @@ Class(function() {
       ERROR                = '[ERROR] ' + KANJI,
 
       // garbage collection settings
-      GC_TIMEOUT           = 1500,                                    // checking routine (ms)
-      GC_MAX_WORKING_TIME  =  250,                                    // duration GC is allowed work (ms), more than that, terminate itself
+      GC_TIMEOUT           = 1500,                                                                 // checking routine (ms)
+      GC_MAX_WORKING_TIME  =  250,                                                                 // duration GC is allowed work (ms), more than that, terminate itself
 
       // shortcuts
       functionOrNil        = jsface.functionOrNil,
@@ -50,11 +49,11 @@ Class(function() {
 
       // internal vars
       isDomReady           = 0,
-      lazySelectorQueue    = [],                                      // lazy component selectors
-      instanceAutoId       = 1,                                       // auto generated instance id
-      actionAutoId         = 1,                                       // auto generated action id
-      repository           = { instanceRefs: {} },                    // components and their instances reference repository { componentId: Component }
-      actionFlag;                                                     // prevent 'click' handler from executing when 'touchend' handler already executed
+      lazySelectorQueue    = [],                                                                   // lazy component selectors
+      instanceAutoId       = 1,                                                                    // auto generated instance id
+      actionAutoId         = 1,                                                                    // auto generated action id
+      repository           = { instanceRefs: {} },                                                 // components and their instances reference repository { componentId: Component }
+      actionFlag;                                                                                  // prevent 'click' handler from executing when 'touchend' handler already executed
 
 
   /**
@@ -63,8 +62,7 @@ Class(function() {
    * @return a valid JavaScript typed object, or the original string if it's not a JavaScript typed object.
    */
   function configAsObjectOrRaw(config) {
-    // preformat the string, config support single quote and unquoted keys
-    config = config && config.replace(/'/g, '"'); // TODO: support unquoted keys, BUG: John's -> John"s
+    config = config && config.replace(/'/g, '"');                                                  // pre-format the string, config should support single quote and unquoted keys. TODO: support unquoted keys, BUG: John's -> John"s
 
     try {
       config = config && parseJSON(config);
@@ -81,29 +79,29 @@ Class(function() {
    * @param action action string. (I.e: "switchView|mouseenter,mouseout:preloadStylist")
    * @return declared action structure. (I.e: { click: "switchView", mouseenter: "preloadStylist", mouseout: "preloadStylist" })
    */
-  function parseAction(action) {                       // "click:switchView|mouseenter,mouseout:preloadStylist"
+  function parseAction(action) {                                                                   // "click:switchView|mouseenter,mouseout:preloadStylist"
     var actions = {},
-        parts   = action && action.split('|'),         // [ "click:switchView", "mouseenter,mouseout:preloadStylist" ]
-        len     = parts && parts.length || 0,          // 2
-        pair, pairLen, actionSet, actionSetLen, event;
+        tokens  = action && action.split('|'),                                                     // [ "click:switchView", "mouseenter,mouseout:preloadStylist" ]
+        len     = tokens && tokens.length || 0,                                                    // 2
+        token, tokenLen, actionSet, actionSetLen, event;
 
     while (len--) {
-      pair    = parts[len].split(':');                 // [ "mouseenter,mouseout", "preloadStylist" ]
-      pairLen = pair.length;                           // 2
+      token    = tokens[len].split(':');                                                           // [ "mouseenter,mouseout", "preloadStylist" ]
+      tokenLen = token.length;                                                                     // 2
 
-      if (0 < pairLen && pairLen < 3) {                // 0 < 2 < 3
-        if (pair.length === 1) {                       // in case of shortcut action: "switchView|mouseenter,mouseout:preloadStylist" > [ "switchView" ]
-          pair.unshift(CLICK);                         // > [ "click" or "touchend",  "switchView" ]
+      if (0 < tokenLen && tokenLen < 3) {                                                          // 0 < 2 < 3
+        if (token.length === 1) {                                                                  // in case of shortcut action: "switchView|mouseenter,mouseout:preloadStylist" > [ "switchView" ]
+          token.unshift(CLICK);                                                                    // > [ "click" or "touchend",  "switchView" ]
         }
 
-        actionSet    = pair[0].split(',');             // [ "mouseenter,mouseout" ] [ [ "mouseenter", "mouseout" ] ]
+        actionSet    = token[0].split(',');                                                        // [ "mouseenter,mouseout" ] [ [ "mouseenter", "mouseout" ] ]
         actionSetLen = actionSet.length;
 
         while (actionSetLen--) {
           event = actionSet[actionSetLen];
-          actions[event] = pair[1];                    // actions.mouseenter = "preloadStylist"
+          actions[event] = token[1];                                                               // actions.mouseenter = "preloadStylist"
 
-          // add non-delegable
+          // mark non-delegable
           if ( !DELEGABLE_FLAGS[event]) {
             actions.nondelegable = true;
           }
@@ -146,6 +144,12 @@ Class(function() {
     return instanceInfo;
   }
 
+  /**
+   * Execute an action when an event happens.
+   * @param e event.
+   * @param $passedTarget optional target, if passed, use instead of e.target.
+   * @param passdEvetnName optional event name, if passed, use in stead of e.type.
+   */
   function actionExecutor(e, $passedTarget, passedEventName) {
     var $target      = $passedTarget ? $passedTarget : $(e.target),
         eventName    = passedEventName ? passedEventName : e.type,
@@ -155,10 +159,10 @@ Class(function() {
 
     actionInfo = $target.attr(DATA_ACT);
 
-    if (actionInfo) {                      // action was initialized before
-      actionInfo = actionInfo.split('/');  // data-act-EVENT-NAME="1/20"
-      instanceId = actionInfo[0];          // "1"
-      actionId   = actionInfo[1];          // "20"
+    if (actionInfo) {                                                                              // action was initialized before
+      actionInfo = actionInfo.split('/');                                                          // data-act="1/20"
+      instanceId = actionInfo[0];                                                                  // "1" : instance id
+      actionId   = actionInfo[1];                                                                  // "20": event handler mapping id
 
       instanceInfo = instanceRefs[instanceId];
 
@@ -180,6 +184,11 @@ Class(function() {
     }
   }
 
+  /**
+   * Map actions declared in a component to HTML elements inside an HTML container.
+   * @param $container jQuery container.
+   * @param instanceInfo information about the instance to handle the declaration.
+   */
   function mapActionsToElements($container, instanceInfo) {
     var instance   = instanceInfo.instance,
         instanceId = instanceInfo.instanceId,
@@ -208,6 +217,11 @@ Class(function() {
     }
   }
 
+  /**
+   * Update listeners when namespace is declared over an instance.
+   * @param instance component instance
+   * @param namespace component namespace
+   */
   function updateListeners(instance, namespace) {
     var instanceListeners, eventId, listeners;
 
@@ -226,6 +240,67 @@ Class(function() {
     }
   }
 
+  /**
+   * Merge actions and listeners of a component with its super classes.
+   * @param Component component class
+   */
+  function mergeActionsAndListeners(Component, api) {
+    var superp = Component.$superp,
+        parent = Component.$super,
+        proto  = Component.prototype,
+        listeners, actions, protoActions, actionSelector, actionMapping, eventId;
+
+    // parse actions and bind to Component.prototype
+    actions = mapOrNil(api.actions);
+    if (actions) {
+      for (actionSelector in actions) {
+        actions[actionSelector] = parseAction(actions[actionSelector]);
+
+        // if nondelegable is found, add hasNondelegableEvents to clazz
+        if (actions[actionSelector].nondelegable) {
+          Component.hasNondelegableEvents = true;
+          delete actions[actionSelector].nondelegable;
+        }
+      }
+      proto.actions = actions;
+    }
+
+    // merge listeners and actions with parent class
+    if (superp) {
+      listeners    = superp.listeners;
+      actions      = superp.actions;
+      protoActions = proto.actions;
+
+      // listeners
+      for (eventId in listeners) {
+        if ( !api.listeners[eventId]) {
+          api.listeners[eventId] = listeners[eventId];
+        }
+      }
+
+      // actions
+      for (actionSelector in actions) {
+        actionMapping = protoActions[actionSelector];
+        if ( !actionMapping) {
+          protoActions[actionSelector] = actions[actionSelector];
+        } else {
+          for (eventId in actions[actionSelector]) {
+            if ( !actionMapping[eventId]) {
+              actionMapping[eventId] = actions[actionSelector][eventId];
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Initialize a component when an event happens over it.
+   * @param e event.
+   * @param translatedEventType optional translated event type, if passed, use instead of e.type.
+   * @param isLazy if true then just initialize the component, don't relay any action.
+   * @param reinitWithInstanceId true to ask Kanji to re-init the component.
+   */
   function initComponentFromEvent(e, translatedEventType, isLazy, reinitWithInstanceId) {
     var $target      = translatedEventType ? $(e.target) : $(this),
         eventName    = translatedEventType || e.type,
@@ -252,7 +327,7 @@ Class(function() {
         if (instanceId && !reinitWithInstanceId) { return; }
 
         dataComValue = $container.attr(DATA_COMPONENT);
-        componentId  = dataComValue.split('/')[0];        // remove namespace
+        componentId  = dataComValue.split('/')[0];                                                 // remove namespace
         Component    = repository[componentId];
 
         if ( !Component) {
@@ -345,14 +420,14 @@ Class(function() {
             instanceId, instance, listeners, event;
 
         // translate eventId to support namespace (for non-shared components only)
-        eventId = (this.type === 'shared') ? eventId : (this.namespace ? [ eventId, '/', this.namespace ].join(EMPTY) : eventId);
+        eventId = (this.type === 'shared') ? eventId
+                                           : (this.namespace ? [ eventId, '/', this.namespace ].join(EMPTY) : eventId);
 
         for (instanceId in instanceRefs) {
-          instance  = instanceRefs[instanceId].instance || instanceRefs[instanceId]; // instanceRefs[instanceId] is Kanji
+          instance  = instanceRefs[instanceId].instance || instanceRefs[instanceId];               // instanceRefs[instanceId] is Kanji
 
           if (instance) {
             listeners = instance.listeners;
-
             if (listeners[eventId]) {
               listeners[eventId].apply(instance, args);
             }
@@ -367,6 +442,16 @@ Class(function() {
     },
 
     /**
+     * Actions
+     */
+    actions: {},
+
+    /**
+     * Event listeners as pair of eventId: handler()
+     */
+    listeners: {},
+
+    /**
      * init is called when component's attached DOM element is ready.
      * @param config configuration.
      * @param element jQuery attached component DOM object.
@@ -378,11 +463,6 @@ Class(function() {
      * @param element jQuery attached component DOM object.
      */
     render: function(element) {},
-
-    /**
-     * Event listeners as pair of eventId: handler()
-     */
-    listeners: {},
 
     /*
      * Ready handler: capture sub-class definitions, save in repository and do initialization if needed.
@@ -397,39 +477,10 @@ Class(function() {
         if (componentId) {
           if ( !repository[componentId]) {
             repository[componentId] = clazz;
-            componentSelector       = [ '[data-com="', componentId, '"],[data-com^="', componentId, '/"]' ].join(EMPTY); // TODO benchmark this selector
+            componentSelector       = [ '[data-com="', componentId, '"],[data-com^="', componentId, '/"]' ].join(EMPTY);         // TODO benchmark this selector
 
-            // merge listeners: no multiple inheritance support, just single parent
-            superp = clazz.$superp;
-            parent = clazz.$super;
-            proto  = clazz.prototype;
-
-            while (superp) {
-              listeners = superp.listeners;
-
-              for (eventId in listeners) {
-                if ( !api.listeners[eventId]) {
-                  api.listeners[eventId] = listeners[eventId];
-                }
-              }
-              superp = parent.$superp;
-              parent = parent.$super;
-            }
-
-            // parse actions
-            actions = mapOrNil(api.actions);
-            if (actions) {
-              for (actionSelector in actions) {
-                actions[actionSelector] = parseAction(actions[actionSelector]);
-
-                // if nondelegable is found, add hasNondelegableEvents to clazz
-                if (actions[actionSelector].nondelegable) {
-                  clazz.hasNondelegableEvents = true;
-                  delete actions[actionSelector].nondelegable;
-                }
-              }
-              proto.actions = actions;
-            }
+            // merge actions and listeners
+            mergeActionsAndListeners(clazz, api);
 
             // do initialize for declared lazy: false fragments if DOM is ready
             // otherwise, put component selector in queue for later initialization
@@ -469,6 +520,14 @@ Class(function() {
                */
               'com:init': function($container) {
                 initComponentFromEvent({ target: $container[0] }, CLICK, true, $container.attr(DATA_INSTANCE));
+              },
+
+              /**
+               * Dump Kanji internal data structure (use for debugging and diagnostic).
+               * @param callback callback function.
+               */
+              'com:dump': function(callback) {
+                callback(repository);
               }
             }
           }
@@ -477,7 +536,7 @@ Class(function() {
 
       $.fn.ready(function() {
         var $document  = $(document),
-            len        = lazySelectorQueue.length,   // lazySelectorQueue stores selectors to data-lazy="false" element and not initialized yet
+            len        = lazySelectorQueue.length,                                                 // lazySelectorQueue stores selectors to data-lazy="false" element and not initialized yet
             queueIndex = 0,
             $containers, count, containerIndex, $container, componentId, Component;
 
@@ -487,7 +546,7 @@ Class(function() {
 
         // Initialize none-lazy/none-initialized components which have classes in place (script imported)
         while (queueIndex < len) {
-          $containers    = $(lazySelectorQueue[queueIndex++]);
+          $containers    = $(lazySelectorQueue[queueIndex++]);                                     // TODO optimize: get all data-com element once, then filter with lazySelectorQueue
           count          = $containers.length;
           containerIndex = 0;
 
@@ -506,10 +565,10 @@ Class(function() {
 
         // Delegate default event type (click or touchend) on [data-act] elements to document
         $document.on(TOUCH_END, function(event) {
-          actionFlag = true;                                          // prevent 'click' handler from executing
+          actionFlag = true;                                                                       // prevent 'click' handler from executing
           return initComponentFromEvent(event, CLICK);
         }).on(CLICK, function(event) {
-          if ( !actionFlag) {                                         // only execute handler if 'touchend' handler was not executed
+          if ( !actionFlag) {                                                                      // only execute handler if 'touchend' handler was not executed
             return initComponentFromEvent(event, CLICK);
           }
           actionFlag = false;
