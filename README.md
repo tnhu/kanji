@@ -427,14 +427,14 @@ When implementing your components, note that Kanji reserves these properties for
 
 ## Best practice
 
-I would recommend to define a root class component which includes all shared actions. Other components extend the root component (or its subclass) rather than inheriting from Kanji class directly. And it would be always better to group your components under a namespace instead of making a lot of global variables.
+I would recommend to define a root class component which includes shared methods (APIs). Other components extend the root component (or its subclass) rather than inheriting from Kanji directly. And it would be always better to group your components under a namespace instead of making a lot of global variables.
 
 ``` js
 LI = {};
 LI.Component = Class(Kanji, {
   id: 'Component'
 
-  // shared actions
+  // shared methods
 });
 
 LI.LoginForm = Class(LI.Component, {
