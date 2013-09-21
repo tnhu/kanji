@@ -89,6 +89,8 @@ What happens here is you declare the form as a component named `LoginForm` with 
 
 Import the script in the same page with the HTML fragment. When you start interacting with the form, you notice the component is instantiated and its handlers are executed (open your browser JavaScript console first). You can play with [this sample online](http://jsfiddle.net/tannhu/H4fTe/15/).
 
+Kanji plays as a tiny application server. You just need to declare your components and Kanji takes care of the rest. There is no need of explicit instantiation like `var loginForm = new LoginForm();` or manually invocation and event binding like `loginForm.init();`, `$.fn.ready(...);`, etc... Kanji declarative mechanism make it much easier for developers to start building applications.
+
 ## Reference
 
 ### HTML data attributes
