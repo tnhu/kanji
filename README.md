@@ -256,11 +256,11 @@ Class(Kanji, {
   id: 'LoginForm',
 
   sayHi: function(event, target) {
-    this.notify('log.info', 'Say hi');
+    this.notify('logger:info', 'Say hi');
   },
 
   sayBye: function(event, target) {
-    this.notify('log.info', 'Say bye');
+    this.notify('logger:info', 'Say bye');
   }
 });
 ```
@@ -272,7 +272,7 @@ Class(Kanji, {
   id: 'Logger',
 
   listeners: {
-    'log.info': function(message) {
+    'logger:info': function(message) {
       // do something when being notified
     }
   }
@@ -287,18 +287,18 @@ Like `actions`, `listeners` in Kanji are inherited. If a parent component has so
 
 Instances of non-shared components are able to communicate directly via namespace mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.
 
-Give an example ([see online](http://jsfiddle.net/tannhu/AzCdA/3/)), we have a Timer component listens to `time:show` event like this:
+Give an example ([see online](http://jsfiddle.net/tannhu/AzCdA/3/)), we have a Timer component listens to `timer:show` event like this:
 
 ``` js
 Class(Kanji, {
   id: 'Timer',
 
   init: function() {
-    this.notify('time:up');
+    this.notify('timer:up');
   },
 
   listeners: {
-    'time:show': function() {
+    'timer:show': function() {
       // ...
     }
   }
@@ -317,13 +317,13 @@ When having declarations:
 The call from a component:
 
 ``` js
-this.notify('time:show');
+this.notify('timer:show');
 ```
 
 notifies Timer1, Timer2, and Timer3, and Red Timer. The call:
 
 ``` js
-this.notify('time:show/red');
+this.notify('timer:show/red');
 ```
 
 notifies Red Timer. But not Timer1, Timer2, and Timer3.
@@ -336,21 +336,23 @@ Class(Kanji, {
 
   listeners: {
     /**
-     * Listen to 'time:up' event on Timer with namespace 'red'
+     * Listen to 'timer:up' event on Timer with namespace 'red'
      */
-    'time:up/red': function() {
+    'timer:up/red': function() {
     },
 
     /**
-     * Listen to 'time:up' event on all timers (Red timer include)
+     * Listen to 'timer:up' event on all timers (Red timer include)
      */
-    'time:up': function() {
+    'timer:up': function() {
     }
   }
 });
 ```
 
 Kanji implements simple namespace notify/listeners routing. In the example above, if Listener component is also namespaced, then it won't work as expected.
+
+I would recommend to prefix notification id by component name in lowercase (`Timer` -> `timer:up`) to make the code consistent and easy to lookup.
 
 #### Inheritance and extending
 
