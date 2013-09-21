@@ -129,7 +129,7 @@ Class(function() {
       instance     = instanceInfo.instance;
 
       if (instance instanceof Component) {
-        return { instance: instance, instanceId: instanceId };
+        return instanceRefs[instanceId];
       }
     }
 
@@ -349,13 +349,17 @@ Class(function() {
             instanceId   = reinitWithInstanceId || instanceAutoId++;
             instanceInfo = { instance: instance, instanceId: instanceId };
 
-            instanceRefs[instanceId] = instanceInfo;
+            //instanceRefs[instanceId] = instanceInfo;
             updateListeners(instance, dataComValue.substring(componentId.length + 1));
             break;
           }
 
-          mapActionsToElements($container, instanceInfo);
-          $container.attr(DATA_INSTANCE, instanceId);
+          mapActionsToElements($container, instanceInfo);                                          // map actions to elements
+          instanceRefs[instanceId] = instanceInfo;                                                 // mapActionsToElements updates instanceInfo, so update instanceRefs as well
+          $container.attr(DATA_INSTANCE, instanceId);                                              // mark instance id on $container
+
+          // remove temporary key in instanceInfo
+          delete instanceInfo.instanceId;
 
           // invoke init()
           instance.init($container, config);
@@ -368,8 +372,6 @@ Class(function() {
             return actionExecutor(e);
           }
 
-          // remove temporary key in instanceInfo
-          delete instanceInfo.instanceId;
         }
       }
     }
