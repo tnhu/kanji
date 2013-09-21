@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Kanji by tnhu</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Kanji</h1>
+        <h2>Web declarative component framework</h2>
+        <a href="https://github.com/tnhu/kanji" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="kanji-%E6%84%9F%E3%81%98" class="anchor" href="#kanji-%E6%84%9F%E3%81%98"><span class="octicon octicon-link"></span></a>Kanji 感じ</h1>
+
+<p><a href="https://travis-ci.org/tnhu/kanji"><img src="https://travis-ci.org/tnhu/kanji.png?branch=master" alt="Build Status"></a></p>
+
+<p>Kanji is a web declarative component framework. The idea behind Kanji is when you develop a web component, HTML and CSS should come first, then JavaScript only gets involved when user interactions happen. Kanji defines a small set of custom HTML data attributes and simple JavaScript APIs to build elegant, standardized, extensible, and testable web components.</p>
+
+<p>Design philosophy:</p>
+
+<ol>
+<li>HTML and CSS first. A web component starts with its viewable presentation. Even with JavaScript disabled, users are able to view the content. JavaScript involves only when needed.</li>
+<li>HTML should be readable in the way that it's connected to both CSS (how the content looks) and JavaScript (which does what when an event happens).</li>
+<li>Event bindings among DOM elements and JavaScript handlers should not be verbose and painful.</li>
+<li>A component should be an isolated piece of software. Components interact with other components by events, not APIs.</li>
+</ol><p>Kanji is small. When being minimized and gziped, standalone version is about 1.7K, full version including dependencies (without jQuery) is less than 2.6K.</p>
+
+<h2>
+<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h2>
+
+<p>In your web page, import Kanji and its dependencies separately:</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"lib/jquery.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"lib/jsface.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"lib/jsface.ready.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"kanji.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+<p>Or import Kanji full version which includes jsface and jsface.ready:</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"lib/jquery.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"kanji-full.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+<h2>
+<a name="short-tutorial" class="anchor" href="#short-tutorial"><span class="octicon octicon-link"></span></a>Short tutorial</h2>
+
+<p>Assume you have an HTML fragment like below for a login form with two input fields and one submit button.</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;form&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">name=</span><span class="s">"username"</span><span class="nt">&gt;&lt;/input&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"password"</span> <span class="na">name=</span><span class="s">"password"</span><span class="nt">&gt;&lt;/input&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"Login"</span><span class="nt">&gt;&lt;/input&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</pre></div>
+
+<p>You declare the fragment as a Kanji component by adding extra information into it via data attributes (<code>data-*</code>).</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;form</span> <span class="na">data-com=</span><span class="s">"LoginForm"</span> <span class="na">data-cfg=</span><span class="s">"{ 'debug': true }"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">name=</span><span class="s">"username"</span><span class="nt">&gt;&lt;/input&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"password"</span> <span class="na">name=</span><span class="s">"password"</span><span class="nt">&gt;&lt;/input&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"Login"</span><span class="nt">&gt;&lt;/input&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</pre></div>
+
+<p>Next you implement LoginForm:</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>          <span class="c1">// a component is a sub-class of Kanji</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginForm'</span><span class="p">,</span>      <span class="c1">// id is component unique identifier</span>
+
+  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>            <span class="c1">// mapping actions</span>
+    <span class="s1">'[name=username]'</span><span class="o">:</span> <span class="s1">'keydown:checkUsername|keyup:checkUsername'</span><span class="p">,</span>
+    <span class="s1">'[name=password]'</span><span class="o">:</span> <span class="s1">'keydown:checkPassword'</span><span class="p">,</span>
+    <span class="s1">'[type=submit]'</span><span class="o">:</span>   <span class="s1">'login'</span>
+  <span class="p">},</span>
+
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">form</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'initialization'</span><span class="p">);</span>
+  <span class="p">},</span>
+
+  <span class="nx">checkUsername</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'checking username'</span><span class="p">);</span>
+  <span class="p">},</span>
+
+  <span class="nx">checkPassword</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'checking password'</span><span class="p">);</span>
+  <span class="p">},</span>
+
+  <span class="nx">login</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'about to login'</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>What happens here is you declare the form as a component named <code>LoginForm</code> with three actions <code>checkUsername</code>, <code>checkPassword</code> and <code>login</code>. <code>checkUsername</code> is bound to <code>keydown</code> and <code>keyup</code> events on the username field, <code>checkPassword</code> handles <code>keydown</code> event on password field and <code>login</code> handles <code>click</code> event on the submit button (click event is default event so you don't have to specify <code>click:login</code>).</p>
+
+<p>Import the script in the same page with the HTML fragment. When you start interacting with the form, you notice the component is instantiated and its handlers are executed (open your browser JavaScript console first). You can play with <a href="http://jsfiddle.net/tannhu/H4fTe/15/">this sample online</a>.</p>
+
+<h2>
+<a name="reference" class="anchor" href="#reference"><span class="octicon octicon-link"></span></a>Reference</h2>
+
+<h3>
+<a name="html-data-attributes" class="anchor" href="#html-data-attributes"><span class="octicon octicon-link"></span></a>HTML data attributes</h3>
+
+<p>Kanji defines two custom HTML data attributes to declare a component and its configuration.</p>
+
+<table>
+<thead><tr>
+<th>Name</th>
+<th>Required</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>data-com="ComponentNameAsString"</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>data-cfg="Any"</td>
+<td>no</td>
+</tr>
+</tbody>
+</table><h4>
+<a name="data-com" class="anchor" href="#data-com"><span class="octicon octicon-link"></span></a>data-com</h4>
+
+<p>Add <code>data-com="YourComponentId"</code> into any HTML elements to declare it's a component. For example:</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;div</span> <span class="na">data-com=</span><span class="s">"LoginForm"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+<p>Components can be nested:</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;div</span> <span class="na">data-com=</span><span class="s">"Page"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-com=</span><span class="s">"Table"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">data-com=</span><span class="s">"Cell"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">data-com=</span><span class="s">"Cell"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-com=</span><span class="s">"Table"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+<h4>
+<a name="data-cfg" class="anchor" href="#data-cfg"><span class="octicon octicon-link"></span></a>data-cfg</h4>
+
+<p>This data attribute is used to pass an extra parameter/configuration into your component.</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;div</span> <span class="na">data-com=</span><span class="s">"LoginForm"</span> <span class="na">data-cfg=</span><span class="s">"{ 'debug': true }"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+<h3>
+<a name="javascript-api" class="anchor" href="#javascript-api"><span class="octicon octicon-link"></span></a>JavaScript API</h3>
+
+<h4>
+<a name="id-type-and-lazy" class="anchor" href="#id-type-and-lazy"><span class="octicon octicon-link"></span></a>id, type, and lazy</h4>
+
+<p>A component is a class extends from Kanji with a unique component id.</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">LoginForm</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginForm'</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Kanji supports two component types: instance and shared components. With instance component, one instance of the component is instantiated per its HTML fragment declaration. With shared component, only one instance of the component is instantiated to handle all HTML fragment declarations. Specifying shared component by adding <code>type: 'shared'</code> in component implementation:</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">LoginForm</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginForm'</span><span class="p">,</span>
+  <span class="nx">type</span><span class="o">:</span> <span class="s1">'shared'</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>By default, all components are lazy instantiated. Meaning a JavaScript instance of the component will be created on demand, when there's a need of creating it (normally when an event happens inside the component DOM). If you want your component to be initialized right away when its DOM fragment is ready, specify <code>lazy: false</code>.</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">LoginForm</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginForm'</span><span class="p">,</span>
+  <span class="nx">lazy</span><span class="o">:</span> <span class="kc">false</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="init-and-render" class="anchor" href="#init-and-render"><span class="octicon octicon-link"></span></a>init() and render()</h4>
+
+<p>init() is the place to handle some initialization when component DOM is ready:</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">LoginForm</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginForm'</span><span class="p">,</span>
+
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<ul>
+<li>
+<code>container</code>: jQuery object represents the component element (HTML)</li>
+<li>
+<code>config</code>: configuration declared in the component (if any)</li>
+</ul><p>If you want to do some rendering when component DOM is ready, implement render() method. render() is invoked right after init().</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">LoginForm</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginForm'</span><span class="p">,</span>
+
+  <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<ul>
+<li>
+<code>container</code>: jQuery object represents the component element (HTML)</li>
+</ul><h4>
+<a name="actions" class="anchor" href="#actions"><span class="octicon octicon-link"></span></a>actions</h4>
+
+<p><code>actions</code> is used to map HTML elements inside the component with events and handlers. Each entry in <code>actions</code> is a set of CSS selector to an HTML element, event names, and handler names.</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginForm'</span><span class="p">,</span>
+
+  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s1">'[name=username]'</span><span class="o">:</span> <span class="s1">'keydown:checkUsername|keyup:checkUsername'</span><span class="p">,</span>
+    <span class="s1">'[name=password]'</span><span class="o">:</span> <span class="s1">'keydown:checkPassword'</span><span class="p">,</span>
+    <span class="s1">'[type=submit]'</span><span class="o">:</span>   <span class="s1">'login'</span>
+  <span class="p">},</span>
+
+  <span class="nx">checkUsername</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'checking username'</span><span class="p">);</span>
+  <span class="p">},</span>
+
+  <span class="nx">checkPassword</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'checking password'</span><span class="p">);</span>
+  <span class="p">},</span>
+
+  <span class="nx">login</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'about to login'</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Kanji supports inheritance in <code>actions</code>. A sub-class inherits actions from its parent. It can also redefine them, or add more actions.</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'Dialog'</span><span class="p">,</span>
+
+  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">self</span><span class="o">:</span> <span class="s1">'mouseenter:fetch|mouseout:fetch'</span>
+  <span class="p">},</span>
+
+  <span class="nx">fetch</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">Class</span><span class="p">(</span><span class="nx">Component</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginDialog'</span><span class="p">,</span>
+
+  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">self</span><span class="o">:</span> <span class="s1">'mousedown:contextMenu|mouseout:contextMenu'</span>   <span class="c1">// inherit 'mouseenter', override 'mouseout', add 'mousedown'</span>
+  <span class="p">},</span>
+
+  <span class="nx">contextMenu</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="listeners-and-notify-inter-component-communication" class="anchor" href="#listeners-and-notify-inter-component-communication"><span class="octicon octicon-link"></span></a>listeners and notify(): Inter-component communication</h4>
+
+<p>A component uses <code>notify()</code> to send notifications.</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginForm'</span><span class="p">,</span>
+
+  <span class="nx">sayHi</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">notify</span><span class="p">(</span><span class="s1">'logger:info'</span><span class="p">,</span> <span class="s1">'Say hi'</span><span class="p">);</span>
+  <span class="p">},</span>
+
+  <span class="nx">sayBye</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">notify</span><span class="p">(</span><span class="s1">'logger:info'</span><span class="p">,</span> <span class="s1">'Say bye'</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Any components want to capture a notification need to implement a listener. For example, Logger listens to <code>log.info</code> to do logging:</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'Logger'</span><span class="p">,</span>
+
+  <span class="nx">listeners</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s1">'logger:info'</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// do something when being notified</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Play with a sample <a href="http://jsfiddle.net/tannhu/YFCVX/3/">online</a>.</p>
+
+<p>Like <code>actions</code>, <code>listeners</code> in Kanji are inherited. If a parent component has some listeners, its child components will have them as default listeners. The child components are also able to override those inherited listeners.</p>
+
+<h4>
+<a name="namespace-and-listeners" class="anchor" href="#namespace-and-listeners"><span class="octicon octicon-link"></span></a>Namespace and listeners</h4>
+
+<p>Instances of non-shared components are able to communicate directly via namespace mechanism. When a component is declared with a namespace, notifications sent intentionally to it must be postfixed by its namespace.</p>
+
+<p>Give an example (<a href="http://jsfiddle.net/tannhu/AzCdA/3/">see online</a>), we have a Timer component listens to <code>timer:show</code> event like this:</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'Timer'</span><span class="p">,</span>
+
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">notify</span><span class="p">(</span><span class="s1">'timer:up'</span><span class="p">);</span>
+  <span class="p">},</span>
+
+  <span class="nx">listeners</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s1">'timer:show'</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="c1">// ...</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>When having declarations:</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;script </span><span class="na">data-com=</span><span class="s">"Timer/red"</span> <span class="na">data-cfg=</span><span class="s">"{ 'src': 'Red Timer' }"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">data-com=</span><span class="s">"Timer"</span> <span class="na">data-cfg=</span><span class="s">"{ 'src': 'Timer1' }"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">data-com=</span><span class="s">"Timer"</span> <span class="na">data-cfg=</span><span class="s">"{ 'src': 'Timer2' }"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">data-com=</span><span class="s">"Timer"</span> <span class="na">data-cfg=</span><span class="s">"{ 'src': 'Timer3' }"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+<p>The call from a component:</p>
+
+<div class="highlight highlight-js"><pre><span class="k">this</span><span class="p">.</span><span class="nx">notify</span><span class="p">(</span><span class="s1">'timer:show'</span><span class="p">);</span>
+</pre></div>
+
+<p>notifies Timer1, Timer2, and Timer3, and Red Timer. The call:</p>
+
+<div class="highlight highlight-js"><pre><span class="k">this</span><span class="p">.</span><span class="nx">notify</span><span class="p">(</span><span class="s1">'timer:show/red'</span><span class="p">);</span>
+</pre></div>
+
+<p>notifies Red Timer. But not Timer1, Timer2, and Timer3.</p>
+
+<p>Listeners also support namespace.</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'Listener'</span><span class="p">,</span>
+
+  <span class="nx">listeners</span><span class="o">:</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Listen to 'timer:up' event on Timer with namespace 'red'</span>
+<span class="cm">     */</span>
+    <span class="s1">'timer:up/red'</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Listen to 'timer:up' event on all timers (Red timer include)</span>
+<span class="cm">     */</span>
+    <span class="s1">'timer:up'</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Kanji implements simple namespace notify/listeners routing. In the example above, if Listener component is also namespaced, then it won't work as expected.</p>
+
+<p>I would recommend to prefix notification id by component name in lowercase (<code>Timer</code> -&gt; <code>timer:up</code>) to make the code consistent and easy to lookup.</p>
+
+<h4>
+<a name="inheritance-and-extending" class="anchor" href="#inheritance-and-extending"><span class="octicon octicon-link"></span></a>Inheritance and extending</h4>
+
+<p>Powered by <a href="https://github.com/tannhu/jsface">jsface</a>, Kanji allows multiple level inheritance. Subclass can override and invoke parent's actions (methods).</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">Component</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'Component'</span><span class="p">,</span>
+
+  <span class="nx">openModal</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">Dialog</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">Component</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'Dialog'</span><span class="p">,</span>
+
+  <span class="nx">openModal</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// do something specifically for Dialog</span>
+
+    <span class="c1">// call Component's openModal</span>
+    <span class="nx">Dialog</span><span class="p">.</span><span class="nx">$superp</span><span class="p">.</span><span class="nx">openModal</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">LoginDialog</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">Component</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginDialog'</span><span class="p">,</span>
+
+  <span class="nx">openModal</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// do something specifically for LoginDialog</span>
+
+    <span class="c1">// call Dialog's openModal</span>
+    <span class="nx">LoginDialog</span><span class="p">.</span><span class="nx">$superp</span><span class="p">.</span><span class="nx">openModal</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="kanji-internal-notifications" class="anchor" href="#kanji-internal-notifications"><span class="octicon octicon-link"></span></a>Kanji internal notifications</h4>
+
+<p>Kanji has three internal notifications:</p>
+
+<table>
+<thead><tr>
+<th>Name</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>com:not-found</td>
+<td>Component implementation not found</td>
+</tr>
+<tr>
+<td>com:init</td>
+<td>Re-init a component</td>
+</tr>
+<tr>
+<td>com:config-not-wellformed</td>
+<td>Component configuration not well-formed</td>
+</tr>
+</tbody>
+</table><p><code>com:not-found</code> is fired when Kanji tries to initialize a component but its implementation is not found. Frameworks built on top of Kanji can capture this notification to do some handy stuff like fetching scripts or error reporting, etc.</p>
+
+<p>You are able to force Kanji to initialize/re-init a component by sending a <code>com:init</code> notification.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<div class="highlight highlight-js"><pre><span class="nx">Kanji</span><span class="p">.</span><span class="nx">notify</span><span class="p">(</span><span class="s1">'com:init'</span><span class="p">,</span> <span class="nx">container</span><span class="p">);</span>
+</pre></div>
+
+<p>What is the use of <code>com:init</code> notification? It's useful when you detach HTML fragment of a component which has actions bound to costly events (like <code>mouseenter</code>, <code>mouseout</code>, <code>mousemove</code>, <code>mouseleave</code>, <code>mouseover</code>, <code>hover</code>) then later on attach the fragment. In such situation, you need to tell Kanji to re-initialize the component again in order to make event handlers work properly.</p>
+
+<h4>
+<a name="kanji-reserved-properties" class="anchor" href="#kanji-reserved-properties"><span class="octicon octicon-link"></span></a>Kanji reserved properties</h4>
+
+<p>When implementing your components, note that Kanji reserves these properties for its internal use.</p>
+
+<table>
+<thead><tr>
+<th>Name</th>
+<th>Required</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>type</td>
+<td>no</td>
+</tr>
+<tr>
+<td>lazy</td>
+<td>no</td>
+</tr>
+<tr>
+<td>actions</td>
+<td>no</td>
+</tr>
+<tr>
+<td>listeners</td>
+<td>no</td>
+</tr>
+<tr>
+<td>namespace</td>
+<td>no</td>
+</tr>
+</tbody>
+</table><h2>
+<a name="best-practice" class="anchor" href="#best-practice"><span class="octicon octicon-link"></span></a>Best practice</h2>
+
+<p>I would recommend to define a root class component which includes shared methods (APIs). Other components extend the root component (or its subclass) rather than inheriting from Kanji directly. And it would be always better to group your components under a namespace instead of making a lot of global variables.</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">LI</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">LI</span><span class="p">.</span><span class="nx">Component</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">Kanji</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'Component'</span>
+
+  <span class="c1">// shared methods</span>
+<span class="p">});</span>
+
+<span class="nx">LI</span><span class="p">.</span><span class="nx">LoginForm</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">LI</span><span class="p">.</span><span class="nx">Component</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">'LoginForm'</span>
+
+  <span class="c1">// ...</span>
+<span class="p">});</span>
+</pre></div>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/tnhu/kanji/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/tnhu/kanji/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/tnhu/kanji"></a> is maintained by <a href="https://github.com/tnhu">tnhu</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
