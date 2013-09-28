@@ -5,7 +5,7 @@
   <title>Kanji Login Sample</title>
 </head>
 <body data-com="LoginPage">
-  <form data-com="LoginForm" data-delegate="LoginPage">
+  <form data-com="LoginForm" data-delegate="true"> <!-- delegate events in child elements to self -->
     <input name="username"></input>
     <input type="password" name="password"></input>
     <input type="submit" value="Login"></input>
