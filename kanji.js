@@ -65,7 +65,6 @@ Class(function() {
     try {
       config = config && parseJSON(config);
     } catch (error) {
-      console.log(ERROR, 'config not well-formed', config);
       Kanji.notify('com:config-not-wellformed', config);
     }
 
@@ -195,7 +194,7 @@ Class(function() {
         $element;
 
     for (selector in actions) {
-      $element = (selector === 'self') ? $container : $container.find(selector);
+      $element = (selector === 'self') ? $container : $container.children(':not([data-com])' + selector);
 
       if ($element.length) {
         actionId = actionAutoId++;

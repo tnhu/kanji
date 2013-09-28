@@ -8,22 +8,23 @@ Class(Kanji, {
   },
 
   init: function(form, config) {
-    console.log('init');
+    console.log('init ', config);
+    this.id = config;
   },
 
   checkUsername: function(event, input) {
     // do something when keydown event happens on username field
-    console.log('onCheckUsername');
+    console.log('onCheckUsername from', this.id);
   },
 
   checkPassword: function(event, input) {
     // do something when keydown event happens on password field
-    console.log('onCheckPassword');
+    console.log('onCheckPassword from', this.id);
   },
 
   login: function(event, input) {
     // do something when click event happens on button submit
-    console.log('onLogin');
+    console.log('onLogin from', this.id);
 
     // prevent form from submitting
     return false;
