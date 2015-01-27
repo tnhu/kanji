@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Kanji Login Sample</title>
+</head>
+<body data-com="Page">
+  <div class="table" data-com="TableView" data-delegate="Page">
+  </div>
+
+  <script type="template/dust" template-id="row">
+  <div class="row">Row {index}</div>
+  </script>
+
+  <script type="template/dot" template-id="row-dot">
+  <div class="row">Row {{index}}</div>
+  </script>
+
+  <!--
+    There are 2 types of delegations:
+      1. event: actions -> delegate to target
+      2. data source, delegate handlers like Objective-C
+
+    Use case:
+    - TableView renders data (http://bitcoin.clarkmoody.com/)
+    - data source from another object or instance
+    - handler on another object or instance
+
+    Specify on HTML level:
+
+    <body data-com="LoginPage">
+    <form data-com="LoginForm" data-event-target="self" data-delegate="LoginPage">
+
+    - events in child elements are delegated to self
+    - data source and delegate handlers are in LoginPage
+  -->
+
+  <script src="../lib/jquery.min.js"></script>
+  <script src="../lib/jsface.js"></script>
+  <script src="../lib/jsface.ready.js"></script>
+  <script src="../kanji.js"></script>
+  <script src="js/delegate.js"></script>
+</body>

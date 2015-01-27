@@ -1,0 +1,32 @@
+{
+  "name": "kanji",
+  "main": "kanji.js",
+  "version": "0.3.0",
+  "homepage": "https://github.com/tnhu/kanji",
+  "authors": [
+    "Tan Nhu <tannhu@gmail.com>"
+  ],
+  "description": "Web declarative component framework",
+  "keywords": [
+    "kanji",
+    "declarative",
+    "component",
+    "framework"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "jquery": "latest",
+    "jsface": "latest"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "lib",
+    "sample",
+    "Notes.md",
+    ".gitignore",
+    ".travis.yml"
+  ]
+}

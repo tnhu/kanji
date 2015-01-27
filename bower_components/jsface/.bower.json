@@ -1,0 +1,26 @@
+{
+  "name": "jsface",
+  "version": "2.3.0",
+  "main": "jsface.js",
+  "ignore": [
+    ".gitignore",
+    ".travis.yml",
+    "CHANGELOG.txt",
+    "package.json",
+    "README.md",
+    "Gruntfile.js",
+    "dist",
+    "samples",
+    "test"
+  ],
+  "homepage": "https://github.com/tnhu/jsface",
+  "_release": "2.3.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.3.0",
+    "commit": "be56b4a9f04675b94c3dfb72a2d5a7cf2daf3ee9"
+  },
+  "_source": "git://github.com/tnhu/jsface.git",
+  "_target": "*",
+  "_originalSource": "jsface"
+}

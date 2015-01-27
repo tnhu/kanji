@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Kanji Login Sample</title>
+</head>
+<body>
+  <form data-com="LoginForm" data-event-target="self">
+    <input name="username"></input>
+    <input type="password" name="password"></input>
+    <input type="submit" value="Login"></input>
+  </form>
+
+  <div data-com="Foo">
+    <form data-com="LoginForm" data-event-target="Foo">
+      <input name="username"></input>
+      <input type="password" name="password"></input>
+      <input type="submit" value="Login"></input>
+    </form>
+  </div>
+
+  <script src="../lib/jquery.min.js"></script>
+  <script src="../lib/jsface.js"></script>
+  <script src="../lib/jsface.ready.js"></script>
+  <script src="../kanji.js"></script>
+  <script src="js/delegate_event.js"></script>
+</body>
