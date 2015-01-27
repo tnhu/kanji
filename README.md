@@ -1,5 +1,5 @@
-Kanji 感じ
-==========
+Kanji
+=====
 
 [![Build Status](https://travis-ci.org/tnhu/kanji.png?branch=master)](https://travis-ci.org/tnhu/kanji)
 

@@ -1,58 +1,59 @@
-var LoginForm = Class(Kanji, {
-  id: 'LoginForm',
-  lazy: false,
-  type: 'shared',
+Class(Kanji, {
+  id: 'TableView',
 
   actions: {
-    self       : 'mouseenter:prefetchData|onClick|mouseout:defetchData',
-    '.username': 'focus|keydown:checkUserName', 'self',
-    '.password': 'focus1|keydown:checkPassword', 'self',
-    '.submit'  : 'submit',
+    '.row': 'rowEventHandler'
+  },
 
-    delegate   : true /* delegate events to self, similar to delegate: 'self' */
-    // 'delegate' : 'parent' /* delegate events parent component (upper level component) */
-    // 'delegate' : 'Page' /* delegate events to self to parent component named Page */
+  delegate: {
+    numberOfRow: function(tableView) {           // required method
+      throw 'numberOfRow delegation required';
+    },
+
+    rowAtIndex: function(tableView, index) {
+      return 0;
+    },
+
+    rowSelected: function(tableView, event, $row) {}
   },
 
   init: function($container, config) {
-    console.log('init with config', config);
   },
 
-  focus: function(event) {
-    console.log('focus in....');
+  render: function($container) {
+    var delegate = this.delegate;
+        rows     = delegate.numberOfRow(this),
+        index    = 0,
+        output   = [],
+        html;
+
+    while (count < rows) {
+      html = delegate.cellAtIndex(this, index);
+      output.push(html);
+    }
+
+    $(output.join('')).appendTo($container);
   },
 
-  prefetchData: function(event) {
-    console.log('prefetchData');
-  },
-
-  checkUserName: function(event) {
-    console.log('checkUserName');
-  },
-
-  checkPassword: function(event) {
-    console.log('checkPassword');
-  },
-
-  submit: function(event) {
-    console.log('submit');
-    return false;
+  rowEventHandler: function(event, $target, $container) {
+    this.delegate.rowSelected(this, event, $target);
   }
 });
 
-/*
-instanceRefs[instanceId] = {
-  instance: INSTANCE,
-  1: 'prefetchData',
-  2: {
-    keydown: 'checkUserName'
+Class(Kanji, {
+  id: 'DelegatePage',
+
+  TableViewDelegate: {
+    numberOfRow: function(tableView) {
+      return 10;
+    },
+
+    rowAtIndex: function(tableView, index) {
+      return '<div class="row">Row ' + index + '</div>';
+    },
+
+    rowSelected: function(tableView, event, $row) {
+      alert('Row ' + index + ' selected');
+    }
   }
-  3: 'checkPassword',
-  4: 'submit'
-};
-
-<form data-com="LoginForm" data-instance="1">
-  <input class="username" name="username" data-act="1/2"/>
-</form>
-
-*/
+});

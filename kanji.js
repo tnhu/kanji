@@ -7,27 +7,23 @@
  * @author Tan Nhu, http://lnkd.in/tnhu
  * @license MIT
  * @dependency jsface, jsface.ready, jQuery, JSON || jQuery.parseJSON
- * @version 0.2.2
  */
 Class(function() {
   var CLICK                = 'click',
       TOUCH_END            = 'touchend',                                                           // on mobile: 'click' is translated to 'touchend' (faster)
 
-      // data attribute names
-      DATA_COMPONENT       = 'data-com',
-      DATA_CONFIG          = 'data-cfg',
-      DATA_INSTANCE        = 'data-instance',                                                      // component instance id (value is auto generated)
-      DATA_ACT             = 'data-act',
+      // attribute names
+      ATTR_COMPONENT       = 'component',                                                          // <form component="LoginForm" args="{ 'foo': 'bar' }">...</form>
+      ATTR_ARGS            = 'args',
+      ATTR_INSTANCE        = 'kanji-instance',                                                     // component instance id (value is auto generated)
+      ATTR_ACTION          = 'kanji-action',                                                       // action id (value is auto generated)
 
-      // selectors
-      SELECTOR_COMPONENT   = '[data-com]',                                                         // component selector
-      SELECTOR_ACT         = '[data-act]',                                                         // action selector
+      // component selector
+      SELECTOR_COMPONENT   = '[component]',
 
       // delegable events (to document) (click and touchend are delegated specifically)
       DELEGABLE_EVENTS     = 'mousedown touchstart keydown',
       DELEGABLE_FLAGS      = { mousedown: 1, touchstart: 1, keydown: 1, click: 1, touchend: 1 },
-
-      EMPTY                = '',
 
       // message prefix
       KANJI                = 'Kanji:',
@@ -35,7 +31,7 @@ Class(function() {
 
       // garbage collection settings
       GC_TIMEOUT           = 1500,                                                                 // checking routine (ms)
-      GC_MAX_WORKING_TIME  =  250,                                                                 // duration GC is allowed work (ms), more than that, terminate itself
+      GC_MAX_WORKING_TIME  =  250,                                                                 // duration GC is allowed work (ms) per loop. More than that? terminate itself
 
       // shortcuts
       functionOrNil        = jsface.functionOrNil,
@@ -53,26 +49,34 @@ Class(function() {
       repository           = { instanceRefs: {} },                                                 // components and their instances reference repository { componentId: Component }
       actionFlag;                                                                                  // prevent 'click' handler from executing when 'touchend' handler already executed
 
-
   /**
-   * Get config as JavaScript object if it's a valid JavaScript object, or as original string if it's not.
-   * @param config config string as in data-cfg.
-   * @return a valid JavaScript typed object, or the original string if it's not a JavaScript typed object.
+   * Report an error.
+   * @param error error
    */
-  function configAsObjectOrRaw(config) {
-    config = config && config.replace(/'/g, '"');                                                  // pre-format the string, config should support single quote and unquoted keys. TODO: support unquoted keys, BUG: John's -> John"s
-
-    try {
-      config = config && parseJSON(config);
-    } catch (error) {
-      Kanji.notify('com:config-not-wellformed', config);
-    }
-
-    return config;
+  function reportError(error) {
+    var error = Kanji.lastError = ERROR + ' ' + error;
+    console.log(error);
   }
 
   /**
-   * Parse an action string (value of data-act attribute).
+   * Get args as JavaScript object if it's a valid JavaScript object, or as original string if it's not.
+   * @param args args string as in args.
+   * @return a valid JavaScript typed object, or the original string if it's not a JavaScript typed object.
+   */
+  function argsAsObjectOrRaw(args) {
+    args = args && args.replace(/'/g, '"');                                                        // pre-format the string, args should support single quote and unquoted keys. TODO: support unquoted keys, BUG: John's -> John"s
+
+    try {
+      args = args && parseJSON(args);
+    } catch (error) {
+      Kanji.lastError = 'argument not well-formed ' + args;
+    }
+
+    return args;
+  }
+
+  /**
+   * Parse an action string (value of ATTR_ACTION attribute).
    * @param action action string. (I.e: "switchView|mouseenter,mouseout:preloadStylist")
    * @return declared action structure. (I.e: { click: "switchView", mouseenter: "preloadStylist", mouseout: "preloadStylist" })
    */
@@ -80,6 +84,7 @@ Class(function() {
     var actions = {},
         tokens  = action && action.split('|'),                                                     // [ "click:switchView", "mouseenter,mouseout:preloadStylist" ]
         len     = tokens && tokens.length || 0,                                                    // 2
+        isTrim  = !!action.trim,
         token, tokenLen, actionSet, actionSetLen, event;
 
     while (len--) {
@@ -95,8 +100,8 @@ Class(function() {
         actionSetLen = actionSet.length;
 
         while (actionSetLen--) {
-          event = actionSet[actionSetLen];
-          actions[event] = token[1];                                                               // actions.mouseenter = "preloadStylist"
+          event          = actionSet[actionSetLen];
+          actions[event] = isTrim ? token[1].trim() : $.trim(token[1]);                            // actions.mouseenter = "preloadStylist"
 
           // mark non-delegable
           if ( !DELEGABLE_FLAGS[event]) {
@@ -104,7 +109,7 @@ Class(function() {
           }
         }
       } else {
-        console.log(ERROR, 'unrecognized action', action);
+        reportError('unrecognized action ' + action);
       }
     }
 
@@ -154,10 +159,10 @@ Class(function() {
         instanceInfo, instanceId, instance, fnName, instanceFn,
         actionInfo, actionId;
 
-    actionInfo = $target.attr(DATA_ACT);
+    actionInfo = $target.attr(ATTR_ACTION);
 
     if (actionInfo) {                                                                              // action was initialized before
-      actionInfo = actionInfo.split('/');                                                          // data-act="1/20"
+      actionInfo = actionInfo.split('/');                                                          // ATTR_ACTION="1/20"
       instanceId = actionInfo[0];                                                                  // "1" : instance id
       actionId   = actionInfo[1];                                                                  // "20": event handler mapping id
 
@@ -175,7 +180,7 @@ Class(function() {
         if (instanceFn) {
           return instanceFn.call(instance, e, $target);
         } else {
-          console.log(ERROR, fnName, 'not implemented');
+          reportError(fnName + ' is not undefined');
         }
       }
     }
@@ -194,11 +199,11 @@ Class(function() {
         $element;
 
     for (selector in actions) {
-      $element = (selector === 'self') ? $container : $container.children(':not([data-com])' + selector);
+      $element = (selector === 'self') ? $container : $container.children(':not([component])' + selector);
 
       if ($element.length) {
         actionId = actionAutoId++;
-        $element.attr('data-act', instanceId + '/' + actionId);
+        $element.attr(ATTR_ACTION, instanceId + '/' + actionId);
         actionMapping = {};
 
         for (actionEvent in actions[selector]) {
@@ -305,11 +310,11 @@ Class(function() {
         instanceInfo, instance, instanceId, fnName, instanceFn,
         $container, dataComValue, componentId, Component,
         actionInfo, actionId, actionName, actionMapping,
-        type, config, actions, selector, actionEvent,
+        type, args, actions, selector, actionEvent,
         $element;
 
     // get event binding id, if any
-    actionInfo = $target.attr(DATA_ACT);
+    actionInfo = $target.attr(ATTR_ACTION);
 
     if ( !reinitWithInstanceId && actionInfo) {
       return actionExecutor(e, $target, eventName);
@@ -318,21 +323,20 @@ Class(function() {
       $container = $target.closest(SELECTOR_COMPONENT);
 
       if ($container.length) {
-        instanceId = $container.attr(DATA_INSTANCE);
+        instanceId = $container.attr(ATTR_INSTANCE);
 
         // instanceId exists and actionsInfo = nil: eventName is not declared, skip processing
-        if (instanceId && !reinitWithInstanceId) { return; }
+        if (instanceId && !reinitWithInstanceId) {
+          return;
+        }
 
-        dataComValue = $container.attr(DATA_COMPONENT);
+        dataComValue = $container.attr(ATTR_COMPONENT);
         componentId  = dataComValue.split('/')[0];                                                 // remove namespace
         Component    = repository[componentId];
 
-        if ( !Component) {
-          console.log(ERROR, 'Component not found', componentId);
-          Kanji.notify('com:not-found', componentId, $container);
-        } else {
-          type   = Component.prototype.type;
-          config = configAsObjectOrRaw($container.attr(DATA_CONFIG));
+        if (Component) {
+          type = Component.prototype.type;
+          args = argsAsObjectOrRaw($container.attr(ATTR_ARGS));
 
           switch (type) {
           case 'shared':
@@ -353,13 +357,13 @@ Class(function() {
 
           mapActionsToElements($container, instanceInfo);                                          // map actions to elements
           instanceRefs[instanceId] = instanceInfo;                                                 // mapActionsToElements updates instanceInfo, so update instanceRefs as well
-          $container.attr(DATA_INSTANCE, instanceId);                                              // mark instance id on $container
+          $container.attr(ATTR_INSTANCE, instanceId);                                              // mark instance id on $container
 
           // remove temporary key in instanceInfo
           delete instanceInfo.instanceId;
 
           // invoke init()
-          instance.init($container, config);
+          instance.init($container, args);
 
           // invoke render()
           instance.render($container);
@@ -368,28 +372,24 @@ Class(function() {
           if ( !isLazy) {
             return actionExecutor(e);
           }
-
+        } else {
+          reportError('Component not found ' + componentId);
         }
       }
     }
   }
 
   /**
-   * Garbage collector.
+   * Garbage collection runner.
    */
-  function gc() {
+  function garbageCollectionRunner() {
     var instanceRefs = repository.instanceRefs,
         startTime    = +new Date(),
         instanceId, element;
 
     // look up in instanceRefs, if found then return
     for (instanceId in instanceRefs) {
-      // zero is Kanji itself, let's skip the boss
-      if (instanceId === '0') {
-        continue;
-      }
-
-      element = $([ '[', DATA_INSTANCE, '=', instanceId, ']' ].join(EMPTY));
+      element = $('[' + ATTR_INSTANCE + '=' + instanceId + ']');
 
       if ( !element.length) {
         delete instanceRefs[instanceId];
@@ -402,11 +402,19 @@ Class(function() {
     }
 
     // auto-check after GC_TIMEOUT ms
-    timeout(gc, GC_TIMEOUT);
+    timeout(garbageCollectionRunner, GC_TIMEOUT);
   }
 
   return {
     $statics: {
+      /**
+       * Initialize or reinitialize a specific component.
+       * @param container jQuery container object
+       */
+      initComponent: function($container) {
+        initComponentFromEvent({ target: $container[0] }, CLICK, true, $container.attr(ATTR_INSTANCE));
+      },
+
       /**
        * Notify listeners of an event.
        * @param eventId event id.
@@ -420,7 +428,7 @@ Class(function() {
 
         // translate eventId to support namespace (for non-shared components only)
         eventId = (this.type === 'shared') ? eventId
-                                           : (this.namespace ? [ eventId, '/', this.namespace ].join(EMPTY) : eventId);
+                                           : (this.namespace ? eventId + '/' + this.namespace : eventId);
 
         for (instanceId in instanceRefs) {
           instance  = instanceRefs[instanceId].instance || instanceRefs[instanceId];               // instanceRefs[instanceId] is Kanji
@@ -437,6 +445,13 @@ Class(function() {
         if (Kanji.debug) {
           console.log(KANJI, eventId);
         }
+      },
+
+      /**
+       * Dump repository which contains internal component instances and action mappings.
+       */
+      dump: function() {
+        console.log(repository);
       }
     },
 
@@ -452,16 +467,16 @@ Class(function() {
 
     /**
      * init is called when component's attached DOM element is ready.
-     * @param config configuration.
-     * @param element jQuery attached component DOM object.
+     * @param $element jQuery attached component DOM object.
+     * @param args arguments.
      */
-    init: function(element, config) {},
+    init: function($element, args) {},
 
     /**
      * Optional custom rendering after init().
-     * @param element jQuery attached component DOM object.
+     * @param $element jQuery attached component DOM object.
      */
-    render: function(element) {},
+    render: function($element) {},
 
     /*
      * Ready handler: capture sub-class definitions, save in repository and do initialization if needed.
@@ -475,7 +490,7 @@ Class(function() {
         if (componentId) {
           if ( !repository[componentId]) {
             repository[componentId] = clazz;
-            componentSelector       = [ '[data-com="', componentId, '"],[data-com^="', componentId, '/"]' ].join(EMPTY);         // TODO benchmark this selector
+            componentSelector       = '[component="' + componentId + '"],[component^="' + componentId + '/"]';         // TODO benchmark this selector
 
             // merge actions and listeners
             mergeActionsAndListeners(clazz, api);
@@ -495,7 +510,7 @@ Class(function() {
             }
           }
         } else {
-          console.log(ERROR, 'id not found on', api);
+          reportError('component id not found on api definition ' + api);
         }
       }
     },
@@ -506,35 +521,9 @@ Class(function() {
     main: function(clazz) {
       Kanji = clazz;
 
-      // Kanji level listeners stored on index 0 of repository.instanceRefs
-      repository = {
-        instanceRefs: {
-          0: {
-            listeners: {
-              /**
-               * Send a 'com:init' notification to init/reinit a specific component.
-               * @param container jQuery container object
-               * @param forceReinit true to force a complete re-initialization
-               */
-              'com:init': function($container) {
-                initComponentFromEvent({ target: $container[0] }, CLICK, true, $container.attr(DATA_INSTANCE));
-              },
-
-              /**
-               * Dump Kanji internal data structure (use for debugging and diagnostic).
-               * @param callback callback function.
-               */
-              'com:dump': function(callback) {
-                callback(repository);
-              }
-            }
-          }
-        }
-      };
-
       $.fn.ready(function() {
         var $document  = $(document),
-            len        = lazySelectorQueue.length,                                                 // lazySelectorQueue stores selectors to data-lazy="false" element and not initialized yet
+            len        = lazySelectorQueue.length,                                                 // lazySelectorQueue stores selectors to elements which is not initialized yet
             queueIndex = 0,
             $containers, count, containerIndex, $container, componentId, Component;
 
@@ -544,14 +533,14 @@ Class(function() {
 
         // Initialize none-lazy/none-initialized components which have classes in place (script imported)
         while (queueIndex < len) {
-          $containers    = $(lazySelectorQueue[queueIndex++]);                                     // TODO optimize: get all data-com element once, then filter with lazySelectorQueue
+          $containers    = $(lazySelectorQueue[queueIndex++]);                                     // TODO optimize: get all component element once, then filter with lazySelectorQueue
           count          = $containers.length;
           containerIndex = 0;
 
           if (count) {
             while (containerIndex < count) {
               $container   = $($containers[containerIndex++]);
-              componentId = $container.attr(DATA_COMPONENT).split('/')[0],
+              componentId = $container.attr(ATTR_COMPONENT).split('/')[0],
               Component   = repository[componentId];
 
               if (Component.prototype.lazy === false || Component.hasNondelegableEvents) {
@@ -561,7 +550,7 @@ Class(function() {
           }
         }
 
-        // Delegate default event type (click or touchend) on [data-act] elements to document
+        // Delegate default event type (click or touchend) on [ATTR_ACTION] elements to document
         $document.on(TOUCH_END, function(event) {
           actionFlag = true;                                                                       // prevent 'click' handler from executing
           return initComponentFromEvent(event, CLICK);
@@ -578,7 +567,7 @@ Class(function() {
         });
 
         // Schedule garbage collection on detached DOM elements (DOM detach -> remove instance reference)
-        timeout(gc, GC_TIMEOUT);
+        timeout(garbageCollectionRunner, GC_TIMEOUT);
       });
     }
   };

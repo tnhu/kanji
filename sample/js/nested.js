@@ -2,14 +2,18 @@ Class(Kanji, {
   id: 'LoginForm',
 
   actions: {
-    '[name=username]': 'keydown:checkUsername',
-    '[name=password]': 'keydown:checkPassword',
+    '[name=username]': 'keydown: checkUsername|click:logClick',
+    '[name=password]': 'keydown: checkPassword',
     '[type=submit]':   'login'
   },
 
   init: function(form, config) {
     console.log('init ', config);
     this.id = config;
+  },
+
+  logClick: function() {
+    console.log('click');
   },
 
   checkUsername: function(event, input) {

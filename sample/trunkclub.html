@@ -2,23 +2,23 @@
 <html>
 <head>
   <meta charset="utf-8"/>
-  <title>Kanji Sample</title>
-  <link rel="stylesheet" href="css/sample.css" type="text/css"/>
+  <title>Kanji TrunkClub Sample</title>
+  <link rel="stylesheet" href="css/sample.css"/>
 </head>
 <body>
   <!-- Page component -->
-  <div class="page" data-com="Page" data-cfg="{ 'debug': true }">
+  <div class="page" component="Page" data-cfg="{ 'debug': true }">
     <!--
       Stylist component
       @see Stylist.js
     -->
-    <div class="view stylist active" data-com="Stylist">
+    <div class="view stylist active" component="Stylist">
       <button class="bt-feedback">Leave feedback</button>
       <button class="bt-email">Email</button>
       <button class="bt-call">Call</button>
       <button class="bt-profile">Profile</button>
 
-      <div class="view feedback" data-com="Feedback">
+      <div class="view feedback" component="Feedback">
         <input type="text" class="name"></input>
         <p>Message:<textarea></textarea></p>
       </div>
@@ -27,19 +27,19 @@
     <!--
       Blog component. It's ok that this component is not implemented
     -->
-    <div class="view blog" data-com="Blog">
+    <div class="view blog" component="Blog">
     </div>
 
     <!--
       Featured component. Kanji does not do anything with a component when its class is not available
     -->
-    <div class="view featured" data-com="Featured">
+    <div class="view featured" component="Featured">
     </div>
 
     <!--
       Wardrope component. It's ok that this component is not implemented
     -->
-    <div class="view wardrope" data-com="Wardrope">
+    <div class="view wardrope" component="Wardrope">
       <button class="bt-request">Request Outfitting Advice</button>
     </div>
 
@@ -56,7 +56,7 @@
       ResourceLoader is a non-ui component (there's no UI interaction)
       @see ResourceLoader.js
     -->
-    <script data-com="ResourceLoader" data-cfg="{
+    <script component="ResourceLoader" args="{
         'js' : [
           'js/Component.js',
           'js/Logger.js',
@@ -66,22 +66,22 @@
           'js/Reporter.js'
         ],
         'css': [
-          'http://dl.dropboxusercontent.com/u/7677927/ui-testings/css/some-css.css'
+          'css/some-css.css'
         ],
         'img': [
-          'https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/2.png',
-          'https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/3.png',
-          'https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/4.png'
+          'img/trunkclubios/2.png',
+          'img/trunkclubios/3.png',
+          'img/trunkclubios/4.png'
         ]
       }">
     </script>
-    <script data-com="Reporter"></script>
+    <script component="Reporter"></script>
 
     <!--
       Logger component demonstrates inter-communication between components via notify()
       @see Logger.js, Component.js#log
     -->
-    <div id="log" data-com="Logger">
+    <div id="log" component="Logger">
       <p class="title">Logs</p>
       <p>Try to click/touch around....</p>
     </div>

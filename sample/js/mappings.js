@@ -4,10 +4,10 @@ var LoginForm = Class(Kanji, {
   type: 'shared',
 
   actions: {
-    self: 'mouseenter:prefetchData|onClick|mouseout:defetchData',
+    self       : 'mouseenter:prefetchData|onClick|mouseout:defetchData',
     '.username': 'focus|keydown:checkUserName',
     '.password': 'focus1|keydown:checkPassword',
-    '.submit': 'submit'
+    '.submit'  : 'submit'
   },
 
   init: function($container, config) {

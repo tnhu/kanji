@@ -5,7 +5,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/linen-texture.jpg) repeat;
+  background: url(../img/trunkclubios/linen-texture.jpg) repeat;
 }
 
 .hidden {
@@ -69,19 +69,19 @@ button:active {
 }
 
 .stylist {
-  background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/1.png) no-repeat;
+  background: url(../img/trunkclubios/1.png) no-repeat;
 }
 
 .blog {
-  background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/2.png) no-repeat;
+  background: url(../img/trunkclubios/2.png) no-repeat;
 }
 
 .featured {
-  background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/3.png) no-repeat;
+  background: url(../img/trunkclubios/3.png) no-repeat;
 }
 
 .wardrope {
-  background: url(https://dl.dropboxusercontent.com/u/7677927/img/trunkclubios/4.png) no-repeat;
+  background: url(../img/trunkclubios/4.png) no-repeat;
 }
 
 .bt-stylist, .bt-blog, .bt-featured, .bt-wardrope {
