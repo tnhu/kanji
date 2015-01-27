@@ -44,10 +44,10 @@ Assume you have an HTML fragment like below for a login form with two input fiel
 </form>
 ```
 
-You declare the fragment as a Kanji component by adding extra information into it via data attributes (`data-*`).
+You declare the fragment as a Kanji component by adding extra information into it via component attribute.
 
 ``` html
-<form data-com="LoginForm" data-cfg="{ 'debug': true }">
+<form component="LoginForm" args="{ 'debug': true }">
   <input name="username"></input>
   <input type="password" name="password"></input>
   <input type="submit" value="Login"></input>
@@ -99,39 +99,39 @@ Kanji defines two custom HTML data attributes to declare a component and its con
 
 | Name                                | Required  |
 | ----------------------------------- | --------- |
-| data-com="ComponentNameAsString"    | yes       |
-| data-cfg="Any"                      | no        |
+| component="ComponentNameAsString"    | yes       |
+| args="Any"                      | no        |
 
-#### data-com
+#### component
 
-Add `data-com="YourComponentId"` into any HTML elements to declare it's a component. For example:
+Add `component="YourComponentId"` into any HTML elements to declare it's a component. For example:
 
 ``` html
-<div data-com="LoginForm">
+<div component="LoginForm">
 </div>
 ```
 
 Components can be nested:
 
 ``` html
-<div data-com="Page">
-  <div data-com="Table">
-    <div data-com="Cell">
+<div component="Page">
+  <div component="Table">
+    <div component="Cell">
     </div>
-    <div data-com="Cell">
+    <div component="Cell">
     </div>
   </div>
-  <div data-com="Table">
+  <div component="Table">
   </div>
 </div>
 ```
 
-#### data-cfg
+#### args
 
-This data attribute is used to pass an extra parameter/configuration into your component.
+This attribute is used to pass an extra parameter/configuration into your component.
 
 ``` html
-<div data-com="LoginForm" data-cfg="{ 'debug': true }">
+<div component="LoginForm" args="{ 'debug': true }">
 </div>
 ```
 
@@ -173,13 +173,13 @@ init() is the place to handle some initialization when component DOM is ready:
 LoginForm = Class(Kanji, {
   id: 'LoginForm',
 
-  init: function(container, config) {
+  init: function(container, args) {
   }
 });
 ```
 
 * `container`: jQuery object represents the component element (HTML)
-* `config`: configuration declared in the component (if any)
+* `args`: arguments declared in the component (if any)
 
 If you want to do some rendering when component DOM is ready, implement render() method. render() is invoked right after init().
 
@@ -310,10 +310,10 @@ Class(Kanji, {
 When having declarations:
 
 ``` html
-<script data-com="Timer/red" data-cfg="{ 'src': 'Red Timer' }"></script>
-<script data-com="Timer" data-cfg="{ 'src': 'Timer1' }"></script>
-<script data-com="Timer" data-cfg="{ 'src': 'Timer2' }"></script>
-<script data-com="Timer" data-cfg="{ 'src': 'Timer3' }"></script>
+<script component="Timer/red" args="{ 'src': 'Red Timer' }"></script>
+<script component="Timer" args="{ 'src': 'Timer1' }"></script>
+<script component="Timer" args="{ 'src': 'Timer2' }"></script>
+<script component="Timer" args="{ 'src': 'Timer3' }"></script>
 ```
 
 The call from a component:
